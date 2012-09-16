@@ -7,10 +7,8 @@ package com.dekdroid.quadtris;
  */
 
 public class BoardTable {
-	private final int CAMERA_WIDTH = 480;
-	private final int CAMERA_HEIGHT = 800;
-	private final int BLOCK_WIDTH = 20;
-	private final int BLOCK_HEIGHT = 20;
+	static final int BLOCK_WIDTH = 20;
+	static final int BLOCK_HEIGHT = 20;
 	private int[][] board; // Jeep attribute
 	private int[][] realPosX, realPosY; // Generate from relativePos
 
@@ -24,8 +22,8 @@ public class BoardTable {
 	private void genRealPos() {
 		// 1 block is 20x20 pixels
 		int i, j;
-		int posX = CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
-		int posY = CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT *8;
+		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
+		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT *8;
 		for (i = 0; i < 17; i++) {
 			for (j = 0; j < 17; j++) {
 				if (board[i][j] == 1) {
@@ -37,7 +35,7 @@ public class BoardTable {
 				}
 				posX += BLOCK_WIDTH;
 			}
-			posX = CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
+			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
 			posY += BLOCK_WIDTH;
 		}
 	}
@@ -54,7 +52,7 @@ public class BoardTable {
 		realPosY = posY;
 	}
 
-	public int[][] getRelativePos() {
+	public int[][] getBoard() {
 		return this.board;
 	}
 

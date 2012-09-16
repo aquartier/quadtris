@@ -19,8 +19,10 @@ import com.dekdroid.quadtris.SceneManager.SceneType;
  */
 
 public class Quadtris extends BaseGameActivity { //Main Activity
-	private final int CAMERA_WIDTH = 480;
-	private final int CAMERA_HEIGHT = 800;
+	static final int CAMERA_WIDTH = 480;
+	static final int CAMERA_HEIGHT = 800;
+	static final int BOARD_WIDTH = 17;
+	static final int BOARD_HEIGHT = 17;
 	private Camera mCamera;
 	private SceneManager sceneManager;
 	private BoardTable boardTable;
