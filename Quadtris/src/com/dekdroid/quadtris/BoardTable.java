@@ -1,3 +1,5 @@
+//WTF
+
 package com.dekdroid.quadtris;
 
 /**
