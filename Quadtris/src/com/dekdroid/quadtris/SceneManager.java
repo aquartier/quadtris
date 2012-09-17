@@ -1,18 +1,28 @@
 package com.dekdroid.quadtris;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.Entity;
+import org.andengine.entity.modifier.RotationAtModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.TextureRegionFactory;
 import org.andengine.opengl.util.GLState;
 import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.adt.io.in.IInputStreamOpener;
+import org.andengine.util.debug.Debug;
 
 /**
  * 
@@ -34,6 +44,10 @@ public class SceneManager {
 	private BoardTable boardTable;
 	private Rectangle[][] myRectangle;
 	private int[][] mainBlockPosX,mainBlockPosY;
+	private Entity rectangleGroup;
+	private TextureRegion lRotateTexture;
+	private TextureRegion rRotateTexture;
+	private TextureRegion backgroundTexture;
 
 	public enum SceneType{
 		SPLASH,
@@ -57,7 +71,35 @@ public class SceneManager {
 
 	//Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		try {
+			ITexture backgroundTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return activity.getAssets().open("gfx/board.gif");
+                }
+            });
+			ITexture lRotateTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return activity.getAssets().open("gfx/left_rotate.png");
+                }
+            });
+			ITexture rRotateTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
+                @Override
+                public InputStream open() throws IOException {
+                    return activity.getAssets().open("gfx/right_rotate.png");
+                }
+            });			
+			lRotateTexture.load();
+			rRotateTexture.load();
+			backgroundTexture.load();
+			this.backgroundTexture = TextureRegionFactory.extractFromTexture(backgroundTexture);
+			this.lRotateTexture = TextureRegionFactory.extractFromTexture(lRotateTexture);
+            this.rRotateTexture = TextureRegionFactory.extractFromTexture(rRotateTexture);
+		} catch (IOException e) {
+            Debug.e(e);
+        }		
+		
 	}
 
 	//Method creates the Splash Scene
@@ -85,27 +127,45 @@ public class SceneManager {
 	public void createGameScenes() {
 		//Create the Main Game Scene and set background color to blue
 		mainGameScene = new Scene();
-		mainGameScene.setBackground(new Background(1, 1, 1));
+		mainGameScene.setBackground(new Background(1, 1, 1));		
 		
 		myRectangle = new Rectangle[17][17];
 		mainBlockPosX = boardTable.getRealPosX();
 		mainBlockPosY = boardTable.getRealPosY();
 		
-		Entity rectangleGroup = new Entity(0, 0);
+		rectangleGroup = drawBoardTable();		
+		rectangleGroup.setPosition(0,0);
 		
-		int i,j;
-		for(i=0;i<17;i++){
-			for(j=0;j<17;j++){
-				if(mainBlockPosX[i][j] != -1){
-					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j], mainBlockPosY[i][j], 20, 20, activity.getVertexBufferObjectManager());
-					myRectangle[i][j].setColor((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
-					rectangleGroup.attachChild(myRectangle[i][j]);
-				}
-			}
-		}
+		Sprite lRotate = new Sprite(20, 700, this.lRotateTexture, activity.getVertexBufferObjectManager()) {
+		    @Override
+		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
+		    		int degree = (int)rectangleGroup.getRotation();
+		    		rectangleGroup.registerEntityModifier(new RotationAtModifier(0.2f, degree, degree-90, 240, 400));
+		    		//TODO reverse array		    		
+		    	}
+		    	return true;
+		    }
+		};
+		Sprite rRotate = new Sprite(380, 700, this.rRotateTexture, activity.getVertexBufferObjectManager()) {
+		    @Override
+		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
+			    	int degree = (int)rectangleGroup.getRotation();
+			    	rectangleGroup.registerEntityModifier(new RotationAtModifier(0.2f, degree, degree+90, 240, 400));
+			    	//TODO reverse array			    	
+		    	}
+		    	return true;
+		    }
+		};
 		
-		rectangleGroup.setPosition(0,0);		
+		mainGameScene.registerTouchArea(lRotate);
+		mainGameScene.registerTouchArea(rRotate);
+		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
+		
 		mainGameScene.attachChild(rectangleGroup);
+		mainGameScene.attachChild(lRotate);
+		mainGameScene.attachChild(rRotate);
 
 	}
 
@@ -126,6 +186,21 @@ public class SceneManager {
 			engine.setScene(mainGameScene);
 			break;
 		}
+	}
+	
+	public Entity drawBoardTable(){
+		rectangleGroup = new Entity(0, 0);
+		int i,j;
+		for(i=0;i<17;i++){
+			for(j=0;j<17;j++){
+				if(mainBlockPosX[i][j] != -1){
+					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j], mainBlockPosY[i][j], 18, 18, activity.getVertexBufferObjectManager());
+					myRectangle[i][j].setColor(0,0,0);
+					rectangleGroup.attachChild(myRectangle[i][j]);
+				}
+			}
+		}
+		return rectangleGroup;
 	}
 
 }
