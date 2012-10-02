@@ -72,12 +72,12 @@ public class SceneManager {
 	//Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
 		try {
-			ITexture backgroundTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
+			/*ITexture backgroundTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
                     return activity.getAssets().open("gfx/board.gif");
                 }
-            });
+            });*/
 			ITexture lRotateTexture = new BitmapTexture(activity.getTextureManager(), new IInputStreamOpener() {
                 @Override
                 public InputStream open() throws IOException {
@@ -92,8 +92,8 @@ public class SceneManager {
             });			
 			lRotateTexture.load();
 			rRotateTexture.load();
-			backgroundTexture.load();
-			this.backgroundTexture = TextureRegionFactory.extractFromTexture(backgroundTexture);
+			//backgroundTexture.load();
+			//this.backgroundTexture = TextureRegionFactory.extractFromTexture(backgroundTexture);
 			this.lRotateTexture = TextureRegionFactory.extractFromTexture(lRotateTexture);
             this.rRotateTexture = TextureRegionFactory.extractFromTexture(rRotateTexture);
 		} catch (IOException e) {
@@ -163,9 +163,9 @@ public class SceneManager {
 		mainGameScene.registerTouchArea(rRotate);
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
 		
-		mainGameScene.attachChild(rectangleGroup);
+		mainGameScene.attachChild(rectangleGroup);		//Add BoardTable to Scene
 		mainGameScene.attachChild(lRotate);
-		mainGameScene.attachChild(rRotate);
+		mainGameScene.attachChild(rRotate);				
 
 	}
 
