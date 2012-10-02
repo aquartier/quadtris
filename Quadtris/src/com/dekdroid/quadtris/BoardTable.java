@@ -12,7 +12,7 @@ public class BoardTable {
 	static final int BLOCK_WIDTH = 20;
 	static final int BLOCK_HEIGHT = 20;
 	private int[][] board; // Jeep attribute
-	private int[][] realPosX, realPosY; // Generate from relativePos
+	private int[][] realPosX, realPosY; // Generate from board
 
 	BoardTable(int[][] table) {
 		board = table;

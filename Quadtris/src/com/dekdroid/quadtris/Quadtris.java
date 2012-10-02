@@ -11,7 +11,10 @@ import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+import android.graphics.Point;
+
 import com.dekdroid.quadtris.SceneManager.SceneType;
+import com.dekdroid.quadtris.Shape.Movement;
 
 /**
  * 
@@ -28,7 +31,15 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	private Camera mCamera;
 	private SceneManager sceneManager;
 	private BoardTable boardTable;
-	private int[][] relativePos;
+	private int[][] map;
+
+	private final int DELAY_START = 1000;
+	private final int DELAY_STEP = 100;
+	private final int DELAY_FINAL = 300;
+
+	private int delay;
+	private boolean running;
+	Shape tetromino;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -44,20 +55,20 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 			OnCreateResourcesCallback pOnCreateResourcesCallback)
 			throws Exception {
 
-		relativePos = new int[17][17];
+		map = new int[17][17];
 
 		// Generate relative array here
 		int i, j;
 		for (i = 0; i < 17; i++) {
 			for (j = 0; j < 17; j++) {
 				if (i <= j)
-					relativePos[i][j] = 1;
+					map[i][j] = 1;
 				else
-					relativePos[i][j] = 0;
+					map[i][j] = 0;
 			}
 		}
 
-		boardTable = new BoardTable(relativePos);
+		boardTable = new BoardTable(map);
 
 		sceneManager = new SceneManager(this, mEngine, mCamera, boardTable);
 		sceneManager.loadSplashSceneResources();
@@ -89,6 +100,82 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		// Jeep code here. Do everything you want such as create thread, game
 		// logic or update blockObj.
 
+		setMap(map);
+		resetMap();
+		running = true;
+		
+		//TODO Game Control here
+		while (running) {
+			while (movable()) {
+				delay_ms(delay);
+				move();
+			}
+			delay_ms(delay);
+			place();
+			boardTable.setBoard(map);
+		}
+
 	}
 
+	// Jeep's methods
+	public void resetMap() {
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
+				map[i][j] = 0;
+			}
+		}
+
+		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
+	}
+
+	public void setMap(int[][] map) {
+		this.map = map;
+	}
+
+	private boolean movable() {
+		for (int i = 0; i < 4; i++) {
+			Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
+
+			if (next.x < 0 || next.x > Quadtris.BOARD_WIDTH)
+				return false;
+			if (next.y < 0 || next.y > Quadtris.BOARD_HEIGHT)
+				return false;
+			if (map[next.y][next.x] == 1)
+				return false;
+		}
+		return true;
+	}
+
+	private Point nextPoint(Point curr, Movement direction) {
+		switch (direction) {
+		case Up:
+			return new Point(curr.x, curr.y - 1);
+		case Down:
+			return new Point(curr.x, curr.y + 1);
+		case Left:
+			return new Point(curr.x - 1, curr.y);
+		case Right:
+			return new Point(curr.x + 1, curr.y);
+		}
+		return null;
+	}
+
+	private void place() {
+		for (int i = 0; i < 4; i++) {
+			map[tetromino.getRPos().y + tetromino.y(i)][tetromino.getRPos().x
+					+ tetromino.x(i)] = 1;
+		}
+	}
+
+	private void delay_ms(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void move() {
+		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
+	}
 }

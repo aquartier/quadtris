@@ -28,7 +28,6 @@ public class GameControl implements Runnable {
 		setMap(map);
 		resetMap();
 		running = true;
-		run();
 	}
 
 	@Override
@@ -36,8 +35,18 @@ public class GameControl implements Runnable {
 		// TODO Auto-generated method stub
 		while (running) {
 			while (movable()) {
-
+				delay_ms(delay);
+				move();
 			}
+			delay_ms(delay);
+			place();
+		}
+	}
+
+	private void place() {
+		for (int i = 0; i < 4; i++) {
+			map[tetromino.getRPos().y + tetromino.y(i)][tetromino.getRPos().x
+					+ tetromino.x(i)] = 1;
 		}
 	}
 
@@ -96,7 +105,15 @@ public class GameControl implements Runnable {
 		return true;
 	}
 
-	private void moveToNextStep() {
+	private void move() {
+		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
+	}
 
+	private void delay_ms(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
