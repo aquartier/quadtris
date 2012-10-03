@@ -40,13 +40,13 @@ public class SceneManager {
 	private BitmapTextureAtlas splashTextureAtlas;
 	private TextureRegion splashTextureRegion;
 	private Scene splashScene;
-	private Scene mainGameScene;
+	Scene mainGameScene;
 	private BoardTable boardTable;
 	private Rectangle[][] myRectangle;
 	private int[][] mainBlockPosX,mainBlockPosY;
-	private Entity rectangleGroup;
-	private TextureRegion lRotateTexture;
-	private TextureRegion rRotateTexture;
+	Entity rectangleGroup;
+	TextureRegion lRotateTexture;
+	TextureRegion rRotateTexture;
 	private TextureRegion backgroundTexture;
 
 	public enum SceneType{
@@ -136,36 +136,8 @@ public class SceneManager {
 		rectangleGroup = drawBoardTable();		
 		rectangleGroup.setPosition(0,0);
 		
-		Sprite lRotate = new Sprite(20, 700, this.lRotateTexture, activity.getVertexBufferObjectManager()) {
-		    @Override
-		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
-		    		int degree = (int)rectangleGroup.getRotation();
-		    		rectangleGroup.registerEntityModifier(new RotationAtModifier(0.2f, degree, degree-90, 240, 400));
-		    		//TODO reverse array		    		
-		    	}
-		    	return true;
-		    }
-		};
-		Sprite rRotate = new Sprite(380, 700, this.rRotateTexture, activity.getVertexBufferObjectManager()) {
-		    @Override
-		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
-			    	int degree = (int)rectangleGroup.getRotation();
-			    	rectangleGroup.registerEntityModifier(new RotationAtModifier(0.2f, degree, degree+90, 240, 400));
-			    	//TODO reverse array			    	
-		    	}
-		    	return true;
-		    }
-		};
 		
-		mainGameScene.registerTouchArea(lRotate);
-		mainGameScene.registerTouchArea(rRotate);
-		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
-		
-		mainGameScene.attachChild(rectangleGroup);		//Add BoardTable to Scene
-		mainGameScene.attachChild(lRotate);
-		mainGameScene.attachChild(rRotate);				
+		mainGameScene.attachChild(rectangleGroup);		//Add BoardTable to Scene			
 
 	}
 
