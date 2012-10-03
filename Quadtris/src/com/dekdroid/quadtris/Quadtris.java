@@ -36,6 +36,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	private final int DELAY_START = 1000;
 	private final int DELAY_STEP = 100;
 	private final int DELAY_FINAL = 300;
+	private final int DELAY_DEBUG= 100;
 
 	private int delay;
 	private boolean running;
@@ -102,20 +103,19 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 
 		setMap(map);
 		boardTable.setBoard(map);
-
-		sceneManager.setCurrentScene(SceneType.MAINGAME);
-		pOnPopulateSceneCallback.onPopulateSceneFinished();
 		resetMap();
+		delay = DELAY_DEBUG;
 		running = true;
 		
 		//TODO Game Control here
 		while (running) {
+			tetromino = new Shape();
 			while (movable()) {
 				delay_ms(delay);
-				move();
+				moveToNext();
 			}
 			delay_ms(delay);
-			place();
+			placeToMap();
 			boardTable.setBoard(map);
 		}
 
@@ -164,7 +164,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		return null;
 	}
 
-	private void place() {
+	private void placeToMap() {
 		for (int i = 0; i < 4; i++) {
 			map[tetromino.getRPos().y + tetromino.y(i)][tetromino.getRPos().x
 					+ tetromino.x(i)] = 1;
@@ -179,7 +179,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		}
 	}
 
-	private void move() {
+	private void moveToNext() {
 		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
 	}
 }

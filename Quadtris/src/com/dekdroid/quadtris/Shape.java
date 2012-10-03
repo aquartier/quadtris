@@ -82,16 +82,26 @@ public class Shape {
 		Tetrominoes[] values = Tetrominoes.values();
 		setShape(values[x]);
 		int y = Math.abs(r.nextInt()) % 4;
-		
+
 		switch (y) {
 		case 0:
 			dir = Movement.Up;
+			setRPos(new Point(Quadtris.BOARD_HEIGHT - 4,
+					Quadtris.BOARD_WIDTH / 2));
+			break;
 		case 1:
 			dir = Movement.Down;
+			setRPos(new Point(1, Quadtris.BOARD_WIDTH / 2));
+			break;
 		case 2:
 			dir = Movement.Left;
+			setRPos(new Point(Quadtris.BOARD_HEIGHT / 2, 1));
+			break;
 		case 3:
 			dir = Movement.Right;
+			setRPos(new Point(Quadtris.BOARD_HEIGHT / 2,
+					Quadtris.BOARD_WIDTH - 4));
+			break;
 		}
 	}
 
@@ -165,8 +175,10 @@ public class Shape {
 	public Point getRPos() {
 		return rPos;
 	}
+
 	/**
 	 * get direction of tetromino
+	 * 
 	 * @return enum of movement
 	 */
 	public Movement getDir() {
