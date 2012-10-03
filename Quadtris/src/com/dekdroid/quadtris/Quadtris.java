@@ -2,8 +2,9 @@
 
 package com.dekdroid.quadtris;
 
+
+
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -42,6 +43,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	private int delay;
 	private boolean running;
 	Shape tetromino;
+	
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -124,7 +126,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		while(i<17*17){
 			map[i / 17][(i++) % 17] = 1;
 			updateBoard();
-			delay_ms(delay);
+			//delay_ms(delay);
 		}
 
 	}
