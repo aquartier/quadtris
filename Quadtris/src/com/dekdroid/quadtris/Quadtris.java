@@ -10,7 +10,10 @@ import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
+import org.andengine.entity.modifier.RotationAtModifier;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.Sprite;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import android.graphics.Point;
@@ -87,6 +90,38 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 				.createSplashScene());
 	}
 
+	public void addTouchButton(){
+		Sprite lRotate = new Sprite(20, 700, sceneManager.lRotateTexture, this.getVertexBufferObjectManager()) {
+		    @Override
+		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
+		    		//TODO rotateleft
+		    		
+		    		/* 
+		    		 * Rotate Example
+		    		 * 
+		    		 * int degree = (int)sceneManager.rectangleGroup.getRotation();
+		    		sceneManager.rectangleGroup.registerEntityModifier(new RotationAtModifier(0.2f, degree, degree-90, 240, 400));*/
+		    	}
+		    	return true;
+		    }
+		};
+		Sprite rRotate = new Sprite(380, 700, sceneManager.rRotateTexture, this.getVertexBufferObjectManager()) {
+		    @Override
+		    public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+		    	if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN){
+			    	//TODO rotate right
+		    		
+		    	}
+		    	return true;
+		    }
+		};
+		sceneManager.mainGameScene.registerTouchArea(lRotate);
+		sceneManager.mainGameScene.registerTouchArea(rRotate);
+		sceneManager.mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);		
+		sceneManager.mainGameScene.attachChild(lRotate);
+		sceneManager.mainGameScene.attachChild(rRotate);
+	}
 	// Method to choose screen to display
 	@Override
 	public void onPopulateScene(Scene pScene,
@@ -97,13 +132,13 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 						mEngine.unregisterUpdateHandler(pTimerHandler);
 						sceneManager.loadGameSceneResources();
 						sceneManager.createGameScenes();
+						addTouchButton();
 						sceneManager.setCurrentScene(SceneType.MAINGAME);
 					}
 				}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 
 		// Jeep code here. Do everything you want such as create thread, game
-		// logic or update blockObj.
 
 		resetMap();
 		updateBoard();
