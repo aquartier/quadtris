@@ -1,4 +1,4 @@
-//A 03-10-2555 00:44
+//Jeep 03-10-2555 11:09
 
 package com.dekdroid.quadtris;
 
@@ -101,6 +101,10 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		// logic or update blockObj.
 
 		setMap(map);
+		boardTable.setBoard(map);
+
+		sceneManager.setCurrentScene(SceneType.MAINGAME);
+		pOnPopulateSceneCallback.onPopulateSceneFinished();
 		resetMap();
 		running = true;
 		
