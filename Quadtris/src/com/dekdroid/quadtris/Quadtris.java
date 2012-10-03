@@ -37,7 +37,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	private final int DELAY_START = 1000;
 	private final int DELAY_STEP = 100;
 	private final int DELAY_FINAL = 300;
-	private final int DELAY_DEBUG= 100;
+	private final int DELAY_DEBUG = 100;
 
 	private int delay;
 	private boolean running;
@@ -103,23 +103,29 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 		// Jeep code here. Do everything you want such as create thread, game
 		// logic or update blockObj.
 
-		setMap(map);
-		boardTable.setBoard(map);
 		resetMap();
+		updateBoard();
+
 		delay = DELAY_DEBUG;
 		running = true;
-		
-		//TODO Game Control here
-		while (running) {
-			tetromino = new Shape();
-			while (movable()) {
-				delay_ms(delay);
-				moveToNext();
-			}
+
+		// TODO Game Control here
+//		while (running) {
+//			tetromino = new Shape();
+//			while (movable()) {
+//				delay_ms(delay);
+//				moveToNext();
+//			}
+//			delay_ms(delay);
+//			placeToMap();
+//			boardTable.setBoard(map);
+//		}
+		int i=0;
+		while(i<17*17){
+			map[i / 17][(i++) % 17] = 1;
+			updateBoard();
 			delay_ms(delay);
-			placeToMap();
-		 * boardTable.setBoard(map); }
-		 */
+		}
 
 	}
 
@@ -131,6 +137,9 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 			}
 		}
 		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
+	}
+
+	public void updateBoard() {
 		boardTable = new BoardTable(map);
 		sceneManager.setBoardTable(boardTable);
 	}
