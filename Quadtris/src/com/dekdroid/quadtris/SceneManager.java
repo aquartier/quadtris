@@ -98,7 +98,7 @@ public class SceneManager {
             this.rRotateTexture = TextureRegionFactory.extractFromTexture(rRotateTexture);
 		} catch (IOException e) {
             Debug.e(e);
-        }		
+        }
 		
 	}
 
@@ -125,7 +125,7 @@ public class SceneManager {
 
 	//Method creates all of the Game Scenes
 	public void createGameScenes() {
-		//Create the Main Game Scene and set background color to blue
+		//Create the Main Game Scene and set background color to white
 		mainGameScene = new Scene();
 		mainGameScene.setBackground(new Background(1, 1, 1));		
 		
@@ -169,7 +169,6 @@ public class SceneManager {
 
 	}
 
-
 	//Method allows you to get the currently active scene
 	public SceneType getCurrentScene() {
 		return currentScene;
@@ -189,6 +188,8 @@ public class SceneManager {
 	}
 	
 	public Entity drawBoardTable(){
+		mainBlockPosX = boardTable.getRealPosX();
+		mainBlockPosY = boardTable.getRealPosY();
 		rectangleGroup = new Entity(0, 0);
 		int i,j;
 		for(i=0;i<17;i++){
@@ -201,6 +202,10 @@ public class SceneManager {
 			}
 		}
 		return rectangleGroup;
+	}
+	public void setBoardTable(BoardTable board){
+		this.boardTable = board;
+		
 	}
 
 }

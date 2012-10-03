@@ -3,6 +3,7 @@
 package com.dekdroid.quadtris;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -57,7 +58,8 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 
 		map = new int[17][17];
 
-		// Generate relative array here
+		// Test generate relative array here. not for game, just for test
+		// Please set relative position
 		int i, j;
 		for (i = 0; i < 17; i++) {
 			for (j = 0; j < 17; j++) {
@@ -86,34 +88,26 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	@Override
 	public void onPopulateScene(Scene pScene,
 			OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-		mEngine.registerUpdateHandler(new TimerHandler(1f,
+		mEngine.registerUpdateHandler(new TimerHandler(2f,
 				new ITimerCallback() {
 					public void onTimePassed(final TimerHandler pTimerHandler) {
 						mEngine.unregisterUpdateHandler(pTimerHandler);
 						sceneManager.loadGameSceneResources();
-						sceneManager.createGameScenes(); //
+						sceneManager.createGameScenes();
 						sceneManager.setCurrentScene(SceneType.MAINGAME);
 					}
 				}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 
-		// Jeep code here. Do everything you want such as create thread, game
-		// logic or update blockObj.
-
-		setMap(map);
 		resetMap();
-		running = true;
-		
-		//TODO Game Control here
-		while (running) {
-			while (movable()) {
-				delay_ms(delay);
-				move();
-			}
-			delay_ms(delay);
-			place();
-			boardTable.setBoard(map);
-		}
+
+		/*
+		 * setMap(map); resetMap(); running = true;
+		 * 
+		 * //TODO Game Control here while (running) { while (movable()) {
+		 * delay_ms(delay); move(); } delay_ms(delay); place();
+		 * boardTable.setBoard(map); }
+		 */
 
 	}
 
@@ -124,8 +118,9 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 				map[i][j] = 0;
 			}
 		}
-
 		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
+		boardTable = new BoardTable(map);
+		sceneManager.setBoardTable(boardTable);
 	}
 
 	public void setMap(int[][] map) {
