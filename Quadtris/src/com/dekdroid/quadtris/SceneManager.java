@@ -252,7 +252,7 @@ public class SceneManager {
 			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (mainBlockPosX[i][j] != -1) {
 					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j],
-							mainBlockPosY[i][j], 18, 18,
+							mainBlockPosY[i][j], BoardTable.BLOCK_WIDTH-2, BoardTable.BLOCK_HEIGHT-2,
 							activity.getVertexBufferObjectManager());
 					myRectangle[i][j].setColor(0, 0, 0);
 					rectangleGroup.attachChild(myRectangle[i][j]);
@@ -287,7 +287,6 @@ public class SceneManager {
 				score++;
 				text.setText("SCORE : " + score);
 				tetromino = new Shape();
-//				tetromino.rotateLeft();
 				tetrominoArray = tetromino.getShapeArray();
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 4; j++) {
