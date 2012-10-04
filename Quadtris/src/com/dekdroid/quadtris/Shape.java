@@ -86,23 +86,25 @@ public class Shape {
 		switch (y) {
 		case 0:
 			dir = Movement.Up;
-			setRPos(new Point(Quadtris.BOARD_HEIGHT - 4,
-					Quadtris.BOARD_WIDTH / 2));
+			setRPos(new Point(Quadtris.BOARD_WIDTH / 2,
+					Quadtris.BOARD_HEIGHT - 4));
 			break;
 		case 1:
 			dir = Movement.Down;
-			setRPos(new Point(1, Quadtris.BOARD_WIDTH / 2));
+			setRPos(new Point(Quadtris.BOARD_WIDTH / 2, 0));
 			break;
 		case 2:
 			dir = Movement.Left;
-			setRPos(new Point(Quadtris.BOARD_HEIGHT / 2, 1));
+			setRPos(new Point(0, Quadtris.BOARD_HEIGHT / 2));
 			break;
 		case 3:
 			dir = Movement.Right;
-			setRPos(new Point(Quadtris.BOARD_HEIGHT / 2,
-					Quadtris.BOARD_WIDTH - 4));
+			setRPos(new Point(Quadtris.BOARD_WIDTH - 4,
+					Quadtris.BOARD_HEIGHT / 2));
 			break;
 		}
+		rPos.x += minX();
+		rPos.y += minY();
 	}
 
 	public int minX() {
