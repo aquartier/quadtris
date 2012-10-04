@@ -28,7 +28,6 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.os.Handler;
 
 import com.dekdroid.quadtris.Shape.Movement;
 
@@ -284,9 +283,9 @@ public class SceneManager {
 		Timer timer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
+				resetMap();
 				score++;
 				text.setText("SCORE : " + score);
-				resetMap();
 				tetromino = new Shape();
 				tetrominoArray = tetromino.getShapeArray();
 				for (int i = 0; i < 4; i++) {

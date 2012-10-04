@@ -73,7 +73,6 @@ public class GameControl implements Runnable {
 				map[i][j] = 0;
 			}
 		}
-
 		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
 	}
 

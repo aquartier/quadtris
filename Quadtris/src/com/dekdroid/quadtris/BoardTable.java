@@ -44,6 +44,7 @@ public class BoardTable {
 
 	public void setBoard(int[][] table) {
 		board = table;
+		genRealPos();
 	}
 
 	public void setRealPosX(int[][] posX) {
