@@ -189,7 +189,7 @@ public class SceneManager {
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
 		mainGameScene.attachChild(lRotate);
 		mainGameScene.attachChild(rRotate);
-		mainGameScene.attachChild(rectangleGroup);		//Add BoardTable to Scene	
+		mainGameScene.attachChild(rectangleGroup);		//Add BoardTable to Scene
 		
 		//CALL JEEP PART
 		jeep();
