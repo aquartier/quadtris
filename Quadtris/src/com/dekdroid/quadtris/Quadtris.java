@@ -2,9 +2,6 @@
 
 package com.dekdroid.quadtris;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -12,15 +9,8 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.input.touch.TouchEvent;
 import org.andengine.ui.activity.BaseGameActivity;
-
-import android.graphics.Point;
-import android.os.Handler;
-
 import com.dekdroid.quadtris.SceneManager.SceneType;
-import com.dekdroid.quadtris.Shape.Movement;
 
 /**
  * 
@@ -37,18 +27,7 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	private Camera mCamera;
 	private SceneManager sceneManager;
 	private BoardTable boardTable;
-	private int[][] map;
-
-	private final int DELAY_START = 1000;
-	private final int DELAY_STEP = 100;
-	private final int DELAY_FINAL = 300;
-	private final int DELAY_DEBUG = 100;
-	private int delay = 50;
-
-	private boolean running;
-	Shape tetromino;
-	Timer timer;
-	Handler handler = new Handler();
+	int[][] map;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -92,165 +71,21 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 				.createSplashScene());
 	}
 
-	public void addTouchButton() {
-		Sprite lRotate = new Sprite(20, 700, sceneManager.lRotateTexture,
-				this.getVertexBufferObjectManager()) {
-			@Override
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
-					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-					// TODO rotateleft
-
-					/*
-					 * Rotate Example
-					 * 
-					 * int degree =
-					 * (int)sceneManager.rectangleGroup.getRotation();
-					 * sceneManager.rectangleGroup.registerEntityModifier(new
-					 * RotationAtModifier(0.2f, degree, degree-90, 240, 400));
-					 */
-				}
-				return true;
-			}
-		};
-		Sprite rRotate = new Sprite(380, 700, sceneManager.rRotateTexture,
-				this.getVertexBufferObjectManager()) {
-			@Override
-			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
-					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-					// TODO rotate right
-
-				}
-				return true;
-			}
-		};
-		sceneManager.mainGameScene.registerTouchArea(lRotate);
-		sceneManager.mainGameScene.registerTouchArea(rRotate);
-		sceneManager.mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
-		sceneManager.mainGameScene.attachChild(lRotate);
-		sceneManager.mainGameScene.attachChild(rRotate);
-	}
-
 	// Method to choose screen to display
 
 	@Override
-	public void onPopulateScene(Scene pScene,
-			OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-		mEngine.registerUpdateHandler(new TimerHandler(2f,
-				new ITimerCallback() {
+	public void onPopulateScene(Scene pScene,OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
+		mEngine.registerUpdateHandler(new TimerHandler(2f,new ITimerCallback() {
 					public void onTimePassed(final TimerHandler pTimerHandler) {
 						mEngine.unregisterUpdateHandler(pTimerHandler);
 						sceneManager.loadGameSceneResources();
-						sceneManager.createGameScenes();
-						addTouchButton();
-						sceneManager.setCurrentScene(SceneType.MAINGAME);
+						sceneManager.createGameScenes();						
+						sceneManager.setCurrentScene(SceneType.MAINGAME);						
 					}
 				}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
+		// Jeep code here. Do everything you want such as create thread, game	
 
-		// Jeep code here. Do everything you want such as create thread, game
-
-		resetMap();
-		updateMap();
-		tetromino = new Shape();
-		running = true;
-
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			public void run() {
-				handler.post(new Runnable() {
-					public void run() {
-
-						resetMap();
-						int tetrominoArray[][] = tetromino.getShapeArray();
-						for (int i = 0; i < 4; i++) {
-							for (int j = 0; j < 4; j++) {
-								map[i + tetromino.getRPos().y][j+tetromino.getRPos().x] = tetrominoArray[i][j];
-							}
-						}
-						updateMap();
-					}
-				});
-			}
-		}, 0, delay);
-//		resetMap();
-//		int tetrominoArray[][] = tetromino.getShapeArray();
-//		for (int i = 0; i < 4; i++) {
-//			for (int j = 0; j < 4; j++) {
-//				map[i + tetromino.getRPos().y][j+tetromino.getRPos().x] = tetrominoArray[i][j];
-//			}
-//		}
-//		updateMap();
-
-		// TODO Game Control here
-
-	}
-
-	// Jeep's methods
-	public void resetMap() {
-		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
-			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
-				map[i][j] = 0;
-			}
-		}
-		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
-	}
-
-	public void updateMap() {
-		boardTable = new BoardTable(map);
-		sceneManager.setBoardTable(boardTable);
-	}
-
-	public void setMap(int[][] map) {
-		this.map = map;
-	}
-
-	private boolean movable() {
-		for (int i = 0; i < 4; i++) {
-			Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
-
-			if (next.x < 0 || next.x > Quadtris.BOARD_WIDTH)
-				return false;
-			if (next.y < 0 || next.y > Quadtris.BOARD_HEIGHT)
-				return false;
-			if (map[next.y][next.x] == 1)
-				return false;
-		}
-		return true;
-	}
-
-	private Point nextPoint(Point curr, Movement direction) {
-		switch (direction) {
-		case Up:
-			return new Point(curr.x, curr.y - 1);
-		case Down:
-			return new Point(curr.x, curr.y + 1);
-		case Left:
-			return new Point(curr.x - 1, curr.y);
-		case Right:
-			return new Point(curr.x + 1, curr.y);
-		}
-		return null;
-	}
-
-	private void placeToMap() {
-		for (int i = 0; i < 4; i++) {
-			map[tetromino.getRPos().y + tetromino.y(i)][tetromino.getRPos().x
-					+ tetromino.x(i)] = 1;
-		}
-	}
-
-	private void delay_ms(int time) {
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void moveToNext() {
-		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
 	}
 
 }
