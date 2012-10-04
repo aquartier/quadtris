@@ -290,49 +290,16 @@ public class SceneManager {
 				tetrominoArray = tetromino.getShapeArray();
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 4; j++) {
-						map[i + tetromino.getRPos().y][j + tetromino.getRPos().x] = tetrominoArray[i][j];
+						int y=i + tetromino.getRPos().y;
+						int x=j + tetromino.getRPos().x;
+						if (inTable(new Point(y, x)))
+							map[y][x] = tetrominoArray[i][j];
 					}
 				}
 				updateMap();
 			}
 		});
 		engine.registerUpdateHandler(timer);
-
-		/*-----ORIGINAL-------
-		TimerHandler spriteTimerHandler;
-		handler = new Handler();
-		resetMap();
-		updateMap();
-		tetromino = new Shape();
-		running = true;
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			public void run() {
-				post(new Runnable() {
-					public void run() {
-
-						resetMap();
-						int tetrominoArray[][] = tetromino.getShapeArray();
-						for (int i = 0; i < 4; i++) {
-							for (int j = 0; j < 4; j++) {
-								map[i + tetromino.getRPos().y][j+tetromino.getRPos().x] = tetrominoArray[i][j];
-							}
-						}
-						updateMap();
-					}
-				});
-			}
-		}, 0, delay);
-		 */
-		// resetMap();
-		// int tetrominoArray[][] = tetromino.getShapeArray();
-		// for (int i = 0; i < 4; i++) {
-		// for (int j = 0; j < 4; j++) {
-		// map[i + tetromino.getRPos().y][j+tetromino.getRPos().x] =
-		// tetrominoArray[i][j];
-		// }
-		// }
-		// updateMap();
 
 		// TODO Game Control here
 	}
@@ -368,15 +335,18 @@ public class SceneManager {
 	public void setMap(int[][] map) {
 		this.map = map;
 	}
+	public boolean inTable(Point next){
 
+		if (next.x < 0 || next.x >= Quadtris.BOARD_WIDTH)
+			return false;
+		if (next.y < 0 || next.y >= Quadtris.BOARD_HEIGHT)
+			return false;
+		return true;
+	}
 	private boolean movable() {
 		for (int i = 0; i < 4; i++) {
 			Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
-
-			if (next.x < 0 || next.x > Quadtris.BOARD_WIDTH)
-				return false;
-			if (next.y < 0 || next.y > Quadtris.BOARD_HEIGHT)
-				return false;
+			if (!inTable(next))return false;
 			if (map[next.y][next.x] == 1)
 				return false;
 		}
