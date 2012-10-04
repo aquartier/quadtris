@@ -47,9 +47,8 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 
 		// Test generate relative array here. not for game, just for test
 		// Please set relative position
-		int i, j;
-		for (i = 0; i < 17; i++) {
-			for (j = 0; j < 17; j++) {
+		for (int i = 0; i < 17; i++) {
+			for (int j = 0; j < 17; j++) {
 				if (i <= j)
 					map[i][j] = 1;
 				else
