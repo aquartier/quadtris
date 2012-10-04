@@ -87,7 +87,7 @@ public class Shape {
 		case 0:
 			dir = Movement.Up;
 			setRPos(new Point(Quadtris.BOARD_WIDTH / 2, Quadtris.BOARD_HEIGHT
-					- maxY() + minY()));
+					- 4 + 3 - (maxY() - minY())));
 			break;
 		case 1:
 			dir = Movement.Down;
@@ -99,7 +99,7 @@ public class Shape {
 			break;
 		case 3:
 			dir = Movement.Left;
-			setRPos(new Point(Quadtris.BOARD_WIDTH - maxX() + minX(),
+			setRPos(new Point(Quadtris.BOARD_WIDTH - 4 + 3 - (maxX() - minX()),
 					Quadtris.BOARD_HEIGHT / 2));
 			break;
 		}
