@@ -59,7 +59,7 @@ public class SceneManager {
 	private int[][] map;
 	private BitmapTextureAtlas mFontTexture;
 	private Font mFont;
-	private	Text text;
+	private Text text;
 	private int score = 0;
 	private int tetrominoArray[][];
 
@@ -67,7 +67,7 @@ public class SceneManager {
 	private final int DELAY_STEP = 100;
 	private final int DELAY_FINAL = 300;
 	private final int DELAY_DEBUG = 100;
-	private int delay = 1; //second
+	private int delay = 1; // second
 
 	private Shape tetromino;
 	private boolean running;
@@ -97,10 +97,12 @@ public class SceneManager {
 
 	// Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
-		mFontTexture = new BitmapTextureAtlas(null, 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        mFont = new Font(null, this.mFontTexture, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 20, true, Color.BLACK);
-        engine.getTextureManager().loadTexture(this.mFontTexture);
-        activity.getFontManager().loadFont(this.mFont);
+		mFontTexture = new BitmapTextureAtlas(null, 256, 256,
+				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		mFont = new Font(null, this.mFontTexture, Typeface.create(
+				Typeface.DEFAULT, Typeface.BOLD), 20, true, Color.BLACK);
+		engine.getTextureManager().loadTexture(this.mFontTexture);
+		activity.getFontManager().loadFont(this.mFont);
 		try {
 			/*
 			 * ITexture backgroundTexture = new
@@ -186,12 +188,9 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotateleft
 					tetromino.rotateLeft();
-					/*
-					 * Rotate Example int degree =
-					 * (int)sceneManager.rectangleGroup.getRotation();
-					 * sceneManager.rectangleGroup.registerEntityModifier(new
-					 * RotationAtModifier(0.2f, degree, degree-90, 240, 400));
-					 */
+					if (!placable())
+						tetromino.rotateRight();
+
 				}
 				return true;
 			}
@@ -203,22 +202,24 @@ public class SceneManager {
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate right
-					makeSimpleMap();
-					updateMap();
+					tetromino.rotateLeft();
+					if (!placable())
+						tetromino.rotateRight();
 
 				}
 				return true;
 			}
 		};
-		
-		text = new Text(Quadtris.CAMERA_WIDTH-150,40,mFont,"SCORE : " + score,25,activity.getVertexBufferObjectManager());
-		
+
+		text = new Text(Quadtris.CAMERA_WIDTH - 150, 40, mFont, "SCORE : "
+				+ score, 25, activity.getVertexBufferObjectManager());
+
 		mainGameScene.registerTouchArea(lRotate);
 		mainGameScene.registerTouchArea(rRotate);
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
 		mainGameScene.attachChild(lRotate);
 		mainGameScene.attachChild(rRotate);
-		mainGameScene.attachChild(rectangleGroup); // Add BoardTable to Scene		
+		mainGameScene.attachChild(rectangleGroup); // Add BoardTable to Scene
 		mainGameScene.attachChild(text);
 
 		// CALL JEEP PART
@@ -251,7 +252,8 @@ public class SceneManager {
 			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (mainBlockPosX[i][j] != -1) {
 					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j],
-							mainBlockPosY[i][j], BoardTable.BLOCK_WIDTH-2, BoardTable.BLOCK_HEIGHT-2,
+							mainBlockPosY[i][j], BoardTable.BLOCK_WIDTH - 2,
+							BoardTable.BLOCK_HEIGHT - 2,
 							activity.getVertexBufferObjectManager());
 					myRectangle[i][j].setColor(0, 0, 0);
 					rectangleGroup.attachChild(myRectangle[i][j]);
@@ -278,32 +280,38 @@ public class SceneManager {
 	// Main Jeep Method
 	public void jeep() {
 		resetMap();
-		updateMap();		
+		updateMap();
 		tetromino = new Shape();
+		// TODO code Control here
 		Timer timer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
 				resetMap();
 				score++;
 				text.setText("SCORE : " + score);
-//				tetromino.setRandomShape();
-				tetrominoArray = tetromino.getShapeArray();
-				for (int i = 0; i < 4; i++) {
-					for (int j = 0; j < 4; j++) {
-						int y=i + tetromino.getRPos().y;
-						int x=j + tetromino.getRPos().x;
-						if (inTable(new Point(y, x)))
-							map[y][x] = tetrominoArray[i][j];
-					}
+
+				if (movable()) {
+					moveToNext();
+				} else {
+					placeToMap();
+					tetromino = new Shape();
 				}
+				tetrominoArray = tetromino.getShapeArray();
+				// for (int i = 0; i < 4; i++) {
+				// for (int j = 0; j < 4; j++) {
+				// int y=i + tetromino.getRPos().y;
+				// int x=j + tetromino.getRPos().x;
+				// if (inTable(new Point(y, x)))
+				// map[y][x] = tetrominoArray[i][j];
+				// }
+				// }
 				updateMap();
 			}
 		});
 		engine.registerUpdateHandler(timer);
 
-		// TODO Game Control here
 	}
-	
+
 	public void makeSimpleMap() {
 		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
 			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
@@ -314,7 +322,7 @@ public class SceneManager {
 			}
 		}
 	}
-	
+
 	// Jeep's methods
 	public void resetMap() {
 		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
@@ -335,7 +343,8 @@ public class SceneManager {
 	public void setMap(int[][] map) {
 		this.map = map;
 	}
-	public boolean inTable(Point next){
+
+	public boolean inTable(Point next) {
 
 		if (next.x < 0 || next.x >= Quadtris.BOARD_WIDTH)
 			return false;
@@ -343,10 +352,10 @@ public class SceneManager {
 			return false;
 		return true;
 	}
+
 	private boolean movable() {
 		for (int i = 0; i < 4; i++) {
 			Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
-			if (!inTable(next))return false;
 			if (map[next.y][next.x] == 1)
 				return false;
 		}
@@ -374,16 +383,18 @@ public class SceneManager {
 		}
 	}
 
-	private void delay_ms(int time) {
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void moveToNext() {
 		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
+	}
+
+	private boolean placable() {
+		for (int i = 0; i < 4; i++) {
+			int y = tetromino.y(i);
+			int x = tetromino.x(i);
+			if (map[y][x] == 1)
+				return false;
+		}
+		return true;
 	}
 
 }

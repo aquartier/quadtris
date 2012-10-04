@@ -3,6 +3,7 @@ package com.dekdroid.quadtris;
 import java.util.Random;
 
 import android.graphics.Point;
+import android.util.Log;
 
 public class Shape {
 
@@ -137,34 +138,28 @@ public class Shape {
 		return m;
 	}
 
-	public Shape rotateLeft() {
+	public void rotateLeft() {
 		if (pieceShape == Tetrominoes.SquareShape)
-			return this;
+			return ;
 
-		Shape result = new Shape();
-		result.pieceShape = pieceShape;
 
 		for (int i = 0; i < 4; ++i) {
-			result.setX(i, y(i));
-			result.setY(i, -x(i));
+			int tmp = -x(i);
+			setX(i, y(i));
+			setY(i, tmp);
 		}
-		pieceShape = result.pieceShape;
-		return result;
 	}
 
-	public Shape rotateRight() {
+	public void rotateRight() {
 		if (pieceShape == Tetrominoes.SquareShape)
-			return this;
+			return ;
 
-		Shape result = new Shape();
-		result.pieceShape = pieceShape;
 
 		for (int i = 0; i < 4; ++i) {
-			result.setX(i, -y(i));
-			result.setY(i, x(i));
+			int tmp = x(i);
+			setX(i, -y(i));
+			setY(i, tmp);
 		}
-		pieceShape = result.pieceShape;
-		return result;
 	}
 
 	public int[][] getShapeArray() {
