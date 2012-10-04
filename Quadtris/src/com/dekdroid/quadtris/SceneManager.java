@@ -188,9 +188,9 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate left
 					tetromino.rotateLeft();
-//					if (!placable())
-//						tetromino.rotateRight();
-					//update();
+//					 if (!placable())
+//					 tetromino.rotateRight();
+					update();
 
 				}
 				return true;
@@ -204,9 +204,9 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate right
 					tetromino.rotateRight();
-//					if (!placable())
-//						tetromino.rotateLeft();
-					//update();
+//					 if (!placable())
+//					 tetromino.rotateLeft();
+					update();
 
 				}
 				return true;
@@ -338,7 +338,8 @@ public class SceneManager {
 	public void update() {
 		mainGameScene.detachChild(rectangleGroup);
 		boardTable.setBoard(map);
-		boardTable.setTetromino(tetromino);
+		boardTable.setTetromino(tetromino); // TODO I don't know how to sent
+											// tetromino to boardTable
 		rectangleGroup = drawBoardTable();
 		mainGameScene.attachChild(rectangleGroup);
 	}
@@ -392,8 +393,8 @@ public class SceneManager {
 
 	private boolean placable() {
 		for (int i = 0; i < 4; i++) {
-			int y = tetromino.y(i);
-			int x = tetromino.x(i);
+			int y = tetromino.y(i) + tetromino.getRPos().y;
+			int x = tetromino.x(i) + tetromino.getRPos().x;
 			if (map[y][x] == 1)
 				return false;
 		}
