@@ -28,6 +28,7 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.dekdroid.quadtris.Shape.Movement;
 
@@ -184,9 +185,17 @@ public class SceneManager {
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotateleft
-					resetMap();
-					updateMap();
-
+					tetromino.rotateLeft();
+					String s="";
+					if (tetromino.getDir() == Movement.Down)
+						s = "down";
+					if (tetromino.getDir() == Movement.Up)
+						s = "up";
+					if (tetromino.getDir() == Movement.Left)
+						s = "left";
+					if (tetromino.getDir() == Movement.Right)
+						s = "right";
+					Log.d("jeep", s);
 					/*
 					 * Rotate Example int degree =
 					 * (int)sceneManager.rectangleGroup.getRotation();
@@ -280,13 +289,14 @@ public class SceneManager {
 	public void jeep() {
 		resetMap();
 		updateMap();		
+		tetromino = new Shape();
 		Timer timer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
 				resetMap();
 				score++;
 				text.setText("SCORE : " + score);
-				tetromino = new Shape();
+//				tetromino.setRandomShape();
 				tetrominoArray = tetromino.getShapeArray();
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 4; j++) {

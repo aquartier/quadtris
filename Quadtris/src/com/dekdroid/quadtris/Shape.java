@@ -148,6 +148,11 @@ public class Shape {
 			result.setX(i, y(i));
 			result.setY(i, -x(i));
 		}
+		pieceShape = result.pieceShape;
+		if(dir==Movement.Left)dir = Movement.Down; 
+		if(dir==Movement.Down)dir = Movement.Right; 
+		if(dir==Movement.Right)dir = Movement.Up; 
+		if(dir==Movement.Up)dir = Movement.Left; 
 		return result;
 	}
 
@@ -162,6 +167,11 @@ public class Shape {
 			result.setX(i, -y(i));
 			result.setY(i, x(i));
 		}
+		pieceShape = result.pieceShape;
+		if(dir==Movement.Left)dir = Movement.Up; 
+		if(dir==Movement.Down)dir = Movement.Left; 
+		if(dir==Movement.Right)dir = Movement.Down; 
+		if(dir==Movement.Up)dir = Movement.Right; 
 		return result;
 	}
 
