@@ -168,9 +168,9 @@ public class SceneManager {
 		mainGameScene = new Scene();
 		mainGameScene.setBackground(new Background(1, 1, 1));
 
-		map = new int[17][17];
+		map = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 
-		myRectangle = new Rectangle[17][17];
+		myRectangle = new Rectangle[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 		mainBlockPosX = boardTable.getRealPosX();
 		mainBlockPosY = boardTable.getRealPosY();
 
@@ -248,8 +248,8 @@ public class SceneManager {
 		mainBlockPosX = boardTable.getRealPosX();
 		mainBlockPosY = boardTable.getRealPosY();
 		rectangleGroup = new Entity(0, 0);
-		for (int i = 0; i < 17; i++) {
-			for (int j = 0; j < 17; j++) {
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (mainBlockPosX[i][j] != -1) {
 					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j],
 							mainBlockPosY[i][j], 18, 18,
@@ -305,8 +305,8 @@ public class SceneManager {
 	}
 	
 	public void makeSimpleMap() {
-		for (int i = 0; i < 17; i++) {
-			for (int j = 0; j < 17; j++) {
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (i <= j)
 					map[i][j] = 1;
 				else
