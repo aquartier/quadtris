@@ -16,8 +16,8 @@ public class BoardTable {
 
 	BoardTable(int[][] table) {
 		board = table;
-		realPosX = new int[17][17];
-		realPosY = new int[17][17];
+		realPosX = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
+		realPosY = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 		genRealPos();
 	}
 
@@ -26,8 +26,8 @@ public class BoardTable {
 		int i, j;
 		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
 		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT *8;
-		for (i = 0; i < 17; i++) {
-			for (j = 0; j < 17; j++) {
+		for (i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (board[i][j] == 1) {
 					realPosX[i][j] = posX;
 					realPosY[i][j] = posY;
