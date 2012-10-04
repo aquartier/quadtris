@@ -287,6 +287,7 @@ public class SceneManager {
 				score++;
 				text.setText("SCORE : " + score);
 				tetromino = new Shape();
+//				tetromino.rotateLeft();
 				tetrominoArray = tetromino.getShapeArray();
 				for (int i = 0; i < 4; i++) {
 					for (int j = 0; j < 4; j++) {
