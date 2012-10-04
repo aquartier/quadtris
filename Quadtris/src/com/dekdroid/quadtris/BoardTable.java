@@ -13,6 +13,7 @@ public class BoardTable {
 	static final int BLOCK_HEIGHT = 20;
 	private int[][] board; // Jeep attribute
 	private int[][] realPosX, realPosY; // Generate from board
+	private Shape tetromino;
 
 	BoardTable(int[][] table) {
 		board = table;
@@ -65,5 +66,11 @@ public class BoardTable {
 
 	public int[][] getRealPosY() {
 		return this.realPosY;
+	}
+	public void setTetromino(Shape tetromino){
+		this.tetromino = tetromino;
+	}
+	public Shape getTetromino(){
+		return this.tetromino ;
 	}
 }

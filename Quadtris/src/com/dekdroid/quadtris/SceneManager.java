@@ -186,10 +186,11 @@ public class SceneManager {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
-					// TODO rotateleft
+					// TODO rotate left
 					tetromino.rotateLeft();
-					if (!placable())
-						tetromino.rotateRight();
+//					if (!placable())
+//						tetromino.rotateRight();
+					//update();
 
 				}
 				return true;
@@ -202,9 +203,10 @@ public class SceneManager {
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate right
-					tetromino.rotateLeft();
-					if (!placable())
-						tetromino.rotateRight();
+					tetromino.rotateRight();
+//					if (!placable())
+//						tetromino.rotateLeft();
+					//update();
 
 				}
 				return true;
@@ -280,8 +282,8 @@ public class SceneManager {
 	// Main Jeep Method
 	public void jeep() {
 		resetMap();
-		updateMap();
 		tetromino = new Shape();
+		update();
 		// TODO code Control here
 		Timer timer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
@@ -297,15 +299,15 @@ public class SceneManager {
 					tetromino = new Shape();
 				}
 				tetrominoArray = tetromino.getShapeArray();
-				// for (int i = 0; i < 4; i++) {
-				// for (int j = 0; j < 4; j++) {
-				// int y=i + tetromino.getRPos().y;
-				// int x=j + tetromino.getRPos().x;
-				// if (inTable(new Point(y, x)))
-				// map[y][x] = tetrominoArray[i][j];
-				// }
-				// }
-				updateMap();
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 4; j++) {
+						int y = i + tetromino.getRPos().y;
+						int x = j + tetromino.getRPos().x;
+						if (inTable(new Point(y, x)))
+							map[y][x] = tetrominoArray[i][j];
+					}
+				}
+				update();
 			}
 		});
 		engine.registerUpdateHandler(timer);
@@ -333,9 +335,10 @@ public class SceneManager {
 		map[Quadtris.BOARD_HEIGHT / 2][Quadtris.BOARD_WIDTH / 2] = 1;
 	}
 
-	public void updateMap() {
+	public void update() {
 		mainGameScene.detachChild(rectangleGroup);
 		boardTable.setBoard(map);
+		boardTable.setTetromino(tetromino);
 		rectangleGroup = drawBoardTable();
 		mainGameScene.attachChild(rectangleGroup);
 	}
