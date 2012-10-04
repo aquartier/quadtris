@@ -186,16 +186,6 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotateleft
 					tetromino.rotateLeft();
-					String s="";
-					if (tetromino.getDir() == Movement.Down)
-						s = "down";
-					if (tetromino.getDir() == Movement.Up)
-						s = "up";
-					if (tetromino.getDir() == Movement.Left)
-						s = "left";
-					if (tetromino.getDir() == Movement.Right)
-						s = "right";
-					Log.d("jeep", s);
 					/*
 					 * Rotate Example int degree =
 					 * (int)sceneManager.rectangleGroup.getRotation();
