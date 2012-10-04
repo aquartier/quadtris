@@ -24,8 +24,8 @@ public class BoardTable {
 	private void genRealPos() {
 		// 1 block is 20x20 pixels
 		int i, j;
-		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
-		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT *8;
+		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * Quadtris.BOARD_WIDTH/2;
+		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT * Quadtris.BOARD_HEIGHT/2;
 		for (i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
 			for (j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (board[i][j] == 1) {
@@ -37,8 +37,8 @@ public class BoardTable {
 				}
 				posX += BLOCK_WIDTH;
 			}
-			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * 8;
-			posY += BLOCK_WIDTH;
+			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * Quadtris.BOARD_WIDTH/2;
+			posY += BLOCK_HEIGHT;
 		}
 	}
 
