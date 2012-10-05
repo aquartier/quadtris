@@ -288,7 +288,7 @@ public class SceneManager {
 		mainGameScene.attachChild(text);
 
 		// CALL JEEP PART
-		jeep();
+		gameMainControl();
 
 	}
 
@@ -357,7 +357,7 @@ public class SceneManager {
 	 * ------------------------------------------------------------------------
 	 */
 	// Main Jeep Method
-	public void jeep() {
+	public void gameMainControl() {
 		resetMap();
 		tetromino = new Shape();
 		update();
