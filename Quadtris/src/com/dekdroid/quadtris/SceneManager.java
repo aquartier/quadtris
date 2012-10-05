@@ -33,6 +33,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -395,21 +396,18 @@ public class SceneManager implements SensorEventListener {
 				}
 				if (isGameOver())
 					return;
-				if (placable(tetromino)) {
-					if (movable()) {
-						moveToNext();
-						update();
-					} else {
-						placeToMap();
-						update();
-						tetromino = new Shape();
-					}
+				Point oldPos = tetromino.getRPos();
+				moveToNext();
+				if (!placable(tetromino)) {
+					tetromino.setRPos(oldPos);
+					placeToMap();
 				}
 				if (outOfMap(tetromino)) {
 					score /= 2;
 					tetromino = new Shape();
-					update();
 				}
+				update();
+				// removeFullLine();
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
@@ -573,7 +571,7 @@ public class SceneManager implements SensorEventListener {
 	}
 
 	public boolean isFullLine(int n) {
-		for (int i = 0; i < n * 2 - 1; i++) {
+		for (int i = 1; i < n * 2 + 1; i++) {
 			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
 					- n] == 0)
 				return false;
@@ -587,6 +585,7 @@ public class SceneManager implements SensorEventListener {
 					+ n] == 0)
 				return false;
 		}
+
 		return true;
 	}
 
@@ -632,30 +631,27 @@ public class SceneManager implements SensorEventListener {
 
 	private void updateTetromino() {
 		// TODO Auto-generated method stub
-		// if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
-		// text.setText("control : " + controlY() + " , " + controlX()
-		// + "\nPos : " + tetromino.getRPos().y + " , "
-		// + tetromino.getRPos().x);
-		//
-		// }
+		Movement nextMovement;
 		if (tetromino.getDir() == Movement.Down
 				|| tetromino.getDir() == Movement.Up) {
 			if (tetromino.getRPos().x == controlX())
 				return;
-			Movement nextMovement = (tetromino.getRPos().x < controlX()) ? Movement.Right
+			nextMovement = (tetromino.getRPos().x < controlX()) ? Movement.Right
 					: Movement.Left;
-			if (movable(tetromino, nextMovement))
-				moveToNext(tetromino, nextMovement);
+			// if (movable(tetromino, nextMovement))
+			// moveToNext(tetromino, nextMovement);
 
 		} else {
 
 			if (tetromino.getRPos().y == controlY())
 				return;
-			Movement nextMovement = (tetromino.getRPos().y > controlY()) ? Movement.Up
+			nextMovement = (tetromino.getRPos().y > controlY()) ? Movement.Up
 					: Movement.Down;
-			if (movable(tetromino, nextMovement))
-				moveToNext(tetromino, nextMovement);
 		}
+		Point oldPos = tetromino.getRPos();
+		moveToNext(tetromino, nextMovement);
+		if (!placable(tetromino))
+			tetromino.setRPos(oldPos);
 
 		update();
 	}
