@@ -45,7 +45,7 @@ import com.dekdroid.quadtris.Shape.Tetrominoes;
  * 
  */
 
-public class SceneManager implements SensorEventListener{
+public class SceneManager implements SensorEventListener {
 
 	private SceneType currentScene;
 	BaseGameActivity activity;
@@ -71,10 +71,10 @@ public class SceneManager implements SensorEventListener{
 	private Text text;
 	private int score = 0;
 	private int tetrominoArray[][];
-	
-	private SensorManager sensorManager;	 
-    private int accellerometerSpeedX;
-    private int accellerometerSpeedY;
+
+	private SensorManager sensorManager;
+	private int accellerometerSpeedX;
+	private int accellerometerSpeedY;
 
 	private final int DELAY_START = 1000;
 	private final int DELAY_STEP = 100;
@@ -117,14 +117,18 @@ public class SceneManager implements SensorEventListener{
 
 	// Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
-		sensorManager = (SensorManager) activity.getSystemService(activity.SENSOR_SERVICE);
-		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),sensorManager.SENSOR_DELAY_GAME);
-		engine.registerUpdateHandler(new Timer(0.2f, new Timer.ITimerCallback() {
-			public void onTick() {
-				updateTetromino();
-			}
-		}));
-		
+		sensorManager = (SensorManager) activity
+				.getSystemService(activity.SENSOR_SERVICE);
+		sensorManager.registerListener(this,
+				sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				sensorManager.SENSOR_DELAY_GAME);
+		engine.registerUpdateHandler(new Timer(0.1f,
+				new Timer.ITimerCallback() {
+					public void onTick() {
+						updateTetromino();
+					}
+				}));
+
 		mFontTexture = new BitmapTextureAtlas(null, 256, 256,
 				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		mFont = new Font(null, this.mFontTexture, Typeface.create(
@@ -385,24 +389,24 @@ public class SceneManager implements SensorEventListener{
 				// Your code to execute each interval.
 
 				score++;
-				//text.setText("SCORE : " + score);
-//				while (!placable(tetromino) && !isGameOver()) {
-//					updateGameOverStatus(tetromino.getDir());
-//					tetromino = new Shape();
-//				}
-//				if (isGameOver())
-//					return;
+				// text.setText("SCORE : " + score);
+				while (!placable(tetromino) && !isGameOver()) {
+					updateGameOverStatus(tetromino.getDir());
+					tetromino = new Shape();
+				}
+				if (isGameOver())
+					return;
 				update();
-//				if (placable(tetromino)) {
-//					if (movable()) {
-//						moveToNext();
-//						update();
-//					} else {
-//						placeToMap();
-//						update();
-//						tetromino = new Shape();
-//					}
-//				}
+				if (placable(tetromino)) {
+					if (movable()) {
+						moveToNext();
+						update();
+					} else {
+						placeToMap();
+						update();
+						tetromino = new Shape();
+					}
+				}
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
@@ -473,6 +477,12 @@ public class SceneManager implements SensorEventListener{
 		return placable(nextTetro);
 	}
 
+	synchronized private boolean movable(Shape tetromino, Movement dir) {
+		Shape nextTetro = new Shape(tetromino);
+		nextTetro.setRPos(nextPoint(nextTetro.getRPos(), dir));
+		return placable(nextTetro);
+	}
+
 	private Point nextPoint(Point curr, Movement direction) {
 		switch (direction) {
 		case Up:
@@ -501,6 +511,10 @@ public class SceneManager implements SensorEventListener{
 
 	synchronized private void moveToNext() {
 		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
+	}
+
+	synchronized private void moveToNext(Shape tetromino, Movement dir) {
+		tetromino.setRPos(nextPoint(tetromino.getRPos(), dir));
 	}
 
 	synchronized private boolean placable(Shape tetro) {
@@ -540,6 +554,7 @@ public class SceneManager implements SensorEventListener{
 		for (int i = 0; i < 4; i++)
 			gameOverStatus[i] = false;
 	}
+
 	public boolean isFullLine(int n) {
 		for (int i = 0; i < n * 2 - 1; i++) {
 			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
@@ -577,37 +592,62 @@ public class SceneManager implements SensorEventListener{
 			}
 		}
 	}
+
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		// TODO Auto-generated method stub
 		synchronized (this) {
-            switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                    accellerometerSpeedX = (int) (event.values[0]/1.1);
-                    accellerometerSpeedY = (int) (event.values[1]/1.1);
-                    break;
-            }
+			switch (event.sensor.getType()) {
+			case Sensor.TYPE_ACCELEROMETER:
+				accellerometerSpeedX = (int) (event.values[0] / 1.1);
+				accellerometerSpeedY = (int) (event.values[1] / 1.1);
+				break;
+			}
 		}
 	}
-	
+
 	private void updateTetromino() {
 		// TODO Auto-generated method stub
-		 if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
-			 text.setText("SPEED : " + accellerometerSpeedX + " , " + accellerometerSpeedY );
-		 }
-		 tetromino.setRPos(new Point(controlY(),controlX())); // <----- For testing 
-		 update();
+		if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
+			text.setText("control : " + controlY() + " , " + controlX()
+					+ "\nPos : " + tetromino.getRPos().y + " , "
+					+ tetromino.getRPos().x);
+		}
+		// tetromino.setRPos(new Point(controlX(),controlY())); // <----- For
+		// testing
+		if (tetromino.getDir() == Movement.Down
+				|| tetromino.getDir() == Movement.Up) {
+			if (tetromino.getRPos().x == controlX())
+				return;
+			Movement nextMovement = (tetromino.getRPos().x < controlX()) ? Movement.Right
+					: Movement.Left;
+			if (movable(tetromino, nextMovement))
+				moveToNext(tetromino, nextMovement);
+
+		} else {
+
+			if (tetromino.getRPos().y == controlY())
+				return;
+			Movement nextMovement = (tetromino.getRPos().y > controlY()) ? Movement.Up
+					: Movement.Down;
+			if (movable(tetromino, nextMovement))
+				moveToNext(tetromino, nextMovement);
+		}
+
+		update();
 	}
-	private int controlX(){
-		return accellerometerSpeedY + Quadtris.BOARD_WIDTH/2;
+
+	private int controlX() {
+		return -accellerometerSpeedX + Quadtris.BOARD_WIDTH / 2;
 	}
-	private int controlY(){
-		return -accellerometerSpeedX + Quadtris.BOARD_HEIGHT/2;
+
+	private int controlY() {
+		return accellerometerSpeedY + Quadtris.BOARD_HEIGHT / 2;
 	}
 }
