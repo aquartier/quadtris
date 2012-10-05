@@ -34,6 +34,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.sax.StartElementListener;
 
 import com.dekdroid.quadtris.Shape.Movement;
 
@@ -421,7 +422,7 @@ public class SceneManager implements SensorEventListener {
 
 				if (isGameOver())
 					return;
-				// score++;
+				score += 20 / delay;
 				text.setText("SCORE : " + score);
 				Point oldPos = tetromino.getRPos();
 				moveToNext();
@@ -465,15 +466,14 @@ public class SceneManager implements SensorEventListener {
 		});
 		engine.registerUpdateHandler(jeepTimer);
 		engine.registerUpdateHandler(bgTimer);
-		engine.registerUpdateHandler(new Timer(1.0f,
-				new Timer.ITimerCallback() {
-					@Override
-					public void onTick() {
-						if (isGameOver() && !gameOver.hasParent()) {
-							mainGameScene.attachChild(gameOver);
-						}
-					}
-				}));
+		engine.registerUpdateHandler(new Timer(1f, new Timer.ITimerCallback() {
+			@Override
+			public void onTick() {
+				if (isGameOver() && !gameOver.hasParent()) {
+					mainGameScene.attachChild(gameOver);
+				}
+			}
+		}));
 
 	}
 
@@ -649,13 +649,14 @@ public class SceneManager implements SensorEventListener {
 		}
 		if (!chk)
 			return;
-		score = n;
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				if (i <= h / 2 - n || i >= h / 2 + n)
+				if (i <= h / 2 - n || i >= h / 2 + n || j <= w / 2 - n
+						|| j >= w / 2 + n) {
+					if (map[i][j] == 1)
+						score += 200 / delay;
 					map[i][j] = 0;
-				if (j <= w / 2 - n || j >= w / 2 + n)
-					map[i][j] = 0;
+				}
 
 			}
 		}
