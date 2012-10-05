@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
@@ -29,6 +30,10 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -40,7 +45,7 @@ import com.dekdroid.quadtris.Shape.Tetrominoes;
  * 
  */
 
-public class SceneManager {
+public class SceneManager implements SensorEventListener{
 
 	private SceneType currentScene;
 	BaseGameActivity activity;
@@ -66,6 +71,10 @@ public class SceneManager {
 	private Text text;
 	private int score = 0;
 	private int tetrominoArray[][];
+	
+	private SensorManager sensorManager;	 
+    private int accellerometerSpeedX;
+    private int accellerometerSpeedY;
 
 	private final int DELAY_START = 1000;
 	private final int DELAY_STEP = 100;
@@ -108,6 +117,19 @@ public class SceneManager {
 
 	// Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
+		sensorManager = (SensorManager) activity.getSystemService(activity.SENSOR_SERVICE);
+		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),sensorManager.SENSOR_DELAY_GAME);
+		engine.registerUpdateHandler(new IUpdateHandler() {
+            public void onUpdate(float pSecondsElapsed) {
+                    // TODO
+            		updateTetromino();
+            }            
+
+			public void reset() {
+                    // TODO Auto-generated method stub
+            }
+		});
+		
 		mFontTexture = new BitmapTextureAtlas(null, 256, 256,
 				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		mFont = new Font(null, this.mFontTexture, Typeface.create(
@@ -368,7 +390,7 @@ public class SceneManager {
 				// Your code to execute each interval.
 
 				score++;
-				text.setText("SCORE : " + score);
+				//text.setText("SCORE : " + score);
 				while (!placable(tetromino) && !isGameOver()) {
 					updateGameOverStatus(tetromino.getDir());
 					tetromino = new Shape();
@@ -524,41 +546,29 @@ public class SceneManager {
 			gameOverStatus[i] = false;
 	}
 
-	public boolean isFullLine(int n) {
-		for (int i = 0; i < n * 2 - 1; i++) {
-			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
-				return false;
-			if (map[Quadtris.BOARD_HEIGHT / 2 - n][i + Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
-				return false;
-			if (map[Quadtris.BOARD_HEIGHT / 2 + n][i + Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
-				return false;
-			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
-					+ n] == 0)
-				return false;
-		}
-		return true;
+	@Override
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void removeFullLine() {
-		int n;
-		for (n = 0; n < Quadtris.BOARD_HEIGHT / 2; n++) {
-			if (isFullLine(n))
-				break;
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		// TODO Auto-generated method stub
+		synchronized (this) {
+            switch (event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                    accellerometerSpeedX = (int) event.values[0];
+                    accellerometerSpeedY = (int) event.values[1];
+                    break;
+            }
 		}
-		if (n == Quadtris.BOARD_HEIGHT / 2)
-			return;
-		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
-			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
-				if (i < Quadtris.BOARD_HEIGHT - n
-						&& i >= Quadtris.BOARD_HEIGHT + n)
-					if (j < Quadtris.BOARD_WIDTH - n
-							&& j >= Quadtris.BOARD_WIDTH + n)
-						map[i][j] = 0;
-
-			}
-		}
+	}
+	
+	private void updateTetromino() {
+		// TODO Auto-generated method stub
+		 if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
+			 text.setText("SPEED : " + accellerometerSpeedX + " , " + accellerometerSpeedY );
+		 }
 	}
 }
