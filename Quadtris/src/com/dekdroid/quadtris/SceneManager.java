@@ -31,6 +31,10 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -602,8 +606,8 @@ public class SceneManager implements SensorEventListener {
 		synchronized (this) {
 			switch (event.sensor.getType()) {
 			case Sensor.TYPE_ACCELEROMETER:
-				accellerometerSpeedX = (int) (event.values[0] / 1.1);
-				accellerometerSpeedY = (int) (event.values[1] / 1.1);
+				accellerometerSpeedX = (int) (event.values[0] *1.5 );
+				accellerometerSpeedY = (int) (event.values[1] *1.5 );
 				break;
 			}
 		}
@@ -648,13 +652,11 @@ public class SceneManager implements SensorEventListener {
 		return accellerometerSpeedY + Quadtris.BOARD_HEIGHT / 2;
 	}
 
-	@Override
 	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void onAccelerationChanged(AccelerationData pAccelerationData) {
 		// TODO Auto-generated method stub
 		if(Math.abs(pAccelerationData.getX()-accellerometerSpeedX) > 1 || Math.abs(1.3*pAccelerationData.getY()-accellerometerSpeedY) > 1.3){
