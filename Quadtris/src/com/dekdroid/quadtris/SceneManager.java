@@ -589,8 +589,8 @@ public class SceneManager implements SensorEventListener{
 		synchronized (this) {
             switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                    accellerometerSpeedX = (int) (event.values[0]*1.5);
-                    accellerometerSpeedY = (int) (event.values[1]*1.5);
+                    accellerometerSpeedX = (int) (event.values[0]/1.1);
+                    accellerometerSpeedY = (int) (event.values[1]/1.1);
                     break;
             }
 		}
