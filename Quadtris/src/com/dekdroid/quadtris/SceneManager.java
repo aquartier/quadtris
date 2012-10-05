@@ -413,8 +413,8 @@ public class SceneManager implements SensorEventListener {
 					}
 					tetromino = newTetro;
 				}
-				update();
 				removeFullLine();
+				update();
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
