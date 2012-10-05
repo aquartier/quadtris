@@ -12,8 +12,6 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.input.sensor.acceleration.AccelerationData;
-import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.texture.ITexture;
@@ -650,18 +648,5 @@ public class SceneManager implements SensorEventListener {
 
 	private int controlY() {
 		return accellerometerSpeedY + Quadtris.BOARD_HEIGHT / 2;
-	}
-
-	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onAccelerationChanged(AccelerationData pAccelerationData) {
-		// TODO Auto-generated method stub
-		if(Math.abs(pAccelerationData.getX()-accellerometerSpeedX) > 1 || Math.abs(1.3*pAccelerationData.getY()-accellerometerSpeedY) > 1.3){
-			accellerometerSpeedX = (int)-pAccelerationData.getX();
-	        accellerometerSpeedY = (int) (1.3*pAccelerationData.getY());		
-		}
 	}
 }
