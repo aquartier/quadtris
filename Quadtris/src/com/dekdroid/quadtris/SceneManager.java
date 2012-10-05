@@ -9,6 +9,7 @@ import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
@@ -28,7 +29,6 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import com.dekdroid.quadtris.Shape.Movement;
 
@@ -74,7 +74,11 @@ public class SceneManager {
 	private boolean running;
 	
 	private float delay = 1.0f; // second
-	private Timer timer;		// Timer
+	private Timer jeepTimer,bgTimer;		// Timer
+	private SpriteBackground bg1;
+	private SpriteBackground bg2;
+	private SpriteBackground bg3;
+	public int bgNumber = 1;
 
 	public enum SceneType {
 		SPLASH, MAINGAME
@@ -200,14 +204,16 @@ public class SceneManager {
 	public void createGameScenes() {
 		// Create the Main Game Scene and set background color to white
 		mainGameScene = new Scene();
-		mainGameScene.setBackground(new Background(1, 1, 1));
-
 		map = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 
 		myRectangle = new Rectangle[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 
 		rectangleGroup = drawBoardTable();
 		rectangleGroup.setPosition(0, 0);
+		
+		bg1 = new SpriteBackground(new Sprite(0, 0, backgroundTexture1,activity.getVertexBufferObjectManager()));
+		bg2 = new SpriteBackground(new Sprite(0, 0, backgroundTexture2,activity.getVertexBufferObjectManager()));
+		bg3 = new SpriteBackground(new Sprite(0, 0, backgroundTexture3,activity.getVertexBufferObjectManager()));
 
 		Sprite lRotate = new Sprite(20, Quadtris.CAMERA_HEIGHT-100, lRotateTexture,
 				activity.getVertexBufferObjectManager()) {
@@ -247,10 +253,11 @@ public class SceneManager {
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {					
-					timer.setInterval(0.1f);
+					jeepTimer.setInterval(0.1f);
+					
 				}
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {					
-					timer.setInterval(delay);
+					jeepTimer.setInterval(delay);
 				}
 				return true;
 			}
@@ -263,6 +270,7 @@ public class SceneManager {
 		mainGameScene.registerTouchArea(rRotate);
 		mainGameScene.registerTouchArea(speedUp);
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
+		mainGameScene.setBackground(bg1);
 		mainGameScene.attachChild(lRotate);
 		mainGameScene.attachChild(rRotate);
 		mainGameScene.attachChild(speedUp);
@@ -344,7 +352,7 @@ public class SceneManager {
 		tetromino = new Shape();
 		update();
 		// TODO code Control here
-		timer = new Timer(delay, new Timer.ITimerCallback() {
+		jeepTimer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
 				
@@ -367,8 +375,23 @@ public class SceneManager {
 				 */
 				update();
 			}
+		});		
+		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
+			public void onTick() {
+				if(bgNumber  == 1) {
+					mainGameScene.setBackground(bg1);
+					bgNumber = 2;
+				}else if(bgNumber == 2){
+					mainGameScene.setBackground(bg2);
+					bgNumber = 3;
+				}else if(bgNumber == 3){
+					mainGameScene.setBackground(bg3);
+					bgNumber = 1;
+				}
+			}
 		});
-		engine.registerUpdateHandler(timer);
+		engine.registerUpdateHandler(jeepTimer);
+		engine.registerUpdateHandler(bgTimer);
 
 	}
 
