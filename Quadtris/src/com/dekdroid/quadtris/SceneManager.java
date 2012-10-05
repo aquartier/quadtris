@@ -51,7 +51,8 @@ public class SceneManager {
 	private Scene mainGameScene;
 	private BoardTable boardTable;
 	private Rectangle[][] myRectangle;
-	private int[][] mainBlockPosX, mainBlockPosY;
+	private int[][] realBoardPosX, realBoardPosY;
+	private int[][] realShapePosX, realShapePosY;
 	private Entity rectangleGroup;
 	private TextureRegion lRotateTexture;
 	private TextureRegion rRotateTexture;
@@ -174,8 +175,6 @@ public class SceneManager {
 		map = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
 
 		myRectangle = new Rectangle[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
-		mainBlockPosX = boardTable.getRealPosX();
-		mainBlockPosY = boardTable.getRealPosY();
 
 		rectangleGroup = drawBoardTable();
 		rectangleGroup.setPosition(0, 0);
@@ -188,8 +187,8 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate left
 					tetromino.rotateLeft();
-//					 if (!placable())
-//					 tetromino.rotateRight();
+					// if (!placable())
+					// tetromino.rotateRight();
 					update();
 
 				}
@@ -204,8 +203,8 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate right
 					tetromino.rotateRight();
-//					 if (!placable())
-//					 tetromino.rotateLeft();
+					// if (!placable())
+					// tetromino.rotateLeft();
 					update();
 
 				}
@@ -247,14 +246,28 @@ public class SceneManager {
 	}
 
 	public Entity drawBoardTable() {
-		mainBlockPosX = boardTable.getRealPosX();
-		mainBlockPosY = boardTable.getRealPosY();
+		realBoardPosX = boardTable.getRealBoardPosX();
+		realBoardPosY = boardTable.getRealBoardPosY();
+		realShapePosX = boardTable.getRealShapePosX();
+		realShapePosY = boardTable.getRealShapePosY();
 		rectangleGroup = new Entity(0, 0);
-		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
-			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
-				if (mainBlockPosX[i][j] != -1) {
-					myRectangle[i][j] = new Rectangle(mainBlockPosX[i][j],
-							mainBlockPosY[i][j], BoardTable.BLOCK_WIDTH - 2,
+		for (int i = 0; i < Quadtris.BOARD_WIDTH; i++) {
+			for (int j = 0; j < Quadtris.BOARD_HEIGHT; j++) {
+				if (realBoardPosX[i][j] != -1) {
+					myRectangle[i][j] = new Rectangle(realBoardPosX[i][j],
+							realBoardPosY[i][j], BoardTable.BLOCK_WIDTH - 2,
+							BoardTable.BLOCK_HEIGHT - 2,
+							activity.getVertexBufferObjectManager());
+					myRectangle[i][j].setColor(0, 0, 0);
+					rectangleGroup.attachChild(myRectangle[i][j]);
+				}
+			}
+		}
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (realShapePosX[i][j] != -1) {
+					myRectangle[i][j] = new Rectangle(realShapePosX[i][j],
+							realShapePosY[i][j], BoardTable.BLOCK_WIDTH - 2,
 							BoardTable.BLOCK_HEIGHT - 2,
 							activity.getVertexBufferObjectManager());
 					myRectangle[i][j].setColor(0, 0, 0);
@@ -298,15 +311,13 @@ public class SceneManager {
 					placeToMap();
 					tetromino = new Shape();
 				}
-				tetrominoArray = tetromino.getShapeArray();
-				for (int i = 0; i < 4; i++) {
-					for (int j = 0; j < 4; j++) {
-						int y = i + tetromino.getRPos().y;
-						int x = j + tetromino.getRPos().x;
-						if (inTable(new Point(y, x)))
-							map[y][x] = tetrominoArray[i][j];
-					}
-				}
+				/*
+				 * tetrominoArray = tetromino.getShapeArray(); for (int i = 0; i
+				 * < 4; i++) { for (int j = 0; j < 4; j++) { int y = i +
+				 * tetromino.getRPos().y; int x = j + tetromino.getRPos().x; if
+				 * (inTable(new Point(y, x))) map[y][x] = tetrominoArray[i][j];
+				 * } }
+				 */
 				update();
 			}
 		});
@@ -337,9 +348,9 @@ public class SceneManager {
 
 	public void update() {
 		mainGameScene.detachChild(rectangleGroup);
-		boardTable.setBoard(map);
-		boardTable.setTetromino(tetromino); // TODO I don't know how to sent
-											// tetromino to boardTable
+		boardTable.setBoardAndTetromino(map, tetromino); // Change tetromino you
+															// want and call
+															// update()
 		rectangleGroup = drawBoardTable();
 		mainGameScene.attachChild(rectangleGroup);
 	}

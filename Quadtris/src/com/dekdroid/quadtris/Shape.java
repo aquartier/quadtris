@@ -140,8 +140,7 @@ public class Shape {
 
 	public void rotateLeft() {
 		if (pieceShape == Tetrominoes.SquareShape)
-			return ;
-
+			return;
 
 		for (int i = 0; i < 4; ++i) {
 			int tmp = -x(i);
@@ -152,8 +151,7 @@ public class Shape {
 
 	public void rotateRight() {
 		if (pieceShape == Tetrominoes.SquareShape)
-			return ;
-
+			return;
 
 		for (int i = 0; i < 4; ++i) {
 			int tmp = x(i);

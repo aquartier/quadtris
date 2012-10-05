@@ -10,6 +10,9 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import android.graphics.Point;
+
 import com.dekdroid.quadtris.SceneManager.SceneType;
 
 /**
@@ -22,8 +25,8 @@ import com.dekdroid.quadtris.SceneManager.SceneType;
 public class Quadtris extends BaseGameActivity { // Main Activity
 	static final int CAMERA_WIDTH = 480;
 	static final int CAMERA_HEIGHT = 800;
-	static final int BOARD_WIDTH = 17;
-	static final int BOARD_HEIGHT = 17;
+	static final int BOARD_WIDTH = 23;
+	static final int BOARD_HEIGHT = 23;
 	private Camera mCamera;
 	private SceneManager sceneManager;
 	private BoardTable boardTable;
@@ -43,12 +46,12 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 			OnCreateResourcesCallback pOnCreateResourcesCallback)
 			throws Exception {
 
-		map = new int[17][17];
+		map = new int[BOARD_WIDTH][BOARD_HEIGHT];
 
 		// Test generate relative array here. not for game, just for test
 		// Please set relative position
-		for (int i = 0; i < 17; i++) {
-			for (int j = 0; j < 17; j++) {
+		for (int i = 0; i < BOARD_WIDTH; i++) {
+			for (int j = 0; j < BOARD_HEIGHT; j++) {
 				if (i <= j)
 					map[i][j] = 1;
 				else
@@ -56,7 +59,10 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 			}
 		}
 
-		boardTable = new BoardTable(map);
+		Shape tetromino = new Shape();
+		tetromino.setRPos(new Point(0, 0)); // DUMMY Tetromino
+
+		boardTable = new BoardTable(map, tetromino);
 
 		sceneManager = new SceneManager(this, mEngine, mCamera, boardTable);
 		sceneManager.loadSplashSceneResources();
@@ -73,17 +79,19 @@ public class Quadtris extends BaseGameActivity { // Main Activity
 	// Method to choose screen to display
 
 	@Override
-	public void onPopulateScene(Scene pScene,OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
-		mEngine.registerUpdateHandler(new TimerHandler(2f,new ITimerCallback() {
+	public void onPopulateScene(Scene pScene,
+			OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
+		mEngine.registerUpdateHandler(new TimerHandler(2f,
+				new ITimerCallback() {
 					public void onTimePassed(final TimerHandler pTimerHandler) {
 						mEngine.unregisterUpdateHandler(pTimerHandler);
 						sceneManager.loadGameSceneResources();
-						sceneManager.createGameScenes();						
-						sceneManager.setCurrentScene(SceneType.MAINGAME);						
+						sceneManager.createGameScenes();
+						sceneManager.setCurrentScene(SceneType.MAINGAME);
 					}
 				}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
-		// Jeep code here. Do everything you want such as create thread, game	
+		// Jeep code here. Do everything you want such as create thread, game
 
 	}
 

@@ -2,6 +2,8 @@
 
 package com.dekdroid.quadtris;
 
+import android.graphics.Point;
+
 /**
  * 
  * @author LeoNaiDaS
@@ -12,65 +14,91 @@ public class BoardTable {
 	static final int BLOCK_WIDTH = 20;
 	static final int BLOCK_HEIGHT = 20;
 	private int[][] board; // Jeep attribute
-	private int[][] realPosX, realPosY; // Generate from board
+	private int[][] shape; // shapeArray
+	private int[][] realBoardPosX, realBoardPosY; // Generate from board
+	private int[][] realShapePosX, realShapePosY;
 	private Shape tetromino;
 
-	BoardTable(int[][] table) {
+	BoardTable(int[][] table, Shape tet) {
 		board = table;
-		realPosX = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
-		realPosY = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
+		tetromino = tet;
+		shape = tet.getShapeArray();
+		realBoardPosX = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
+		realBoardPosY = new int[Quadtris.BOARD_HEIGHT][Quadtris.BOARD_WIDTH];
+		realShapePosX = new int[4][4];
+		realShapePosY = new int[4][4];
 		genRealPos();
 	}
 
 	private void genRealPos() {
 		// 1 block is 20x20 pixels
-		int i, j;
-		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * (Quadtris.BOARD_WIDTH/2);
-		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT * (Quadtris.BOARD_HEIGHT/2);
-		for (i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
-			for (j = 0; j < Quadtris.BOARD_WIDTH; j++) {
+		int posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH
+				* (Quadtris.BOARD_WIDTH / 2);
+		int posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT
+				* (Quadtris.BOARD_HEIGHT / 2);
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
 				if (board[i][j] == 1) {
-					realPosX[i][j] = posX;
-					realPosY[i][j] = posY;
+					realBoardPosX[i][j] = posX;
+					realBoardPosY[i][j] = posY;
 				} else {
-					realPosX[i][j] = -1;
-					realPosY[i][j] = -1;
+					realBoardPosX[i][j] = -1;
+					realBoardPosY[i][j] = -1;
 				}
 				posX += BLOCK_WIDTH;
 			}
-			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH * (Quadtris.BOARD_WIDTH/2);
+			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH
+					* (Quadtris.BOARD_WIDTH / 2);
 			posY += BLOCK_HEIGHT;
 		}
+		int x = tetromino.getRPos().x;
+		int y = tetromino.getRPos().y;
+		posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH
+				* (Quadtris.BOARD_WIDTH / 2) + (x * BLOCK_WIDTH);
+		posY = Quadtris.CAMERA_HEIGHT / 2 - BLOCK_HEIGHT / 2 - BLOCK_HEIGHT
+				* (Quadtris.BOARD_HEIGHT / 2) + (y * BLOCK_WIDTH);
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (shape[i][j] == 1) {
+					realShapePosX[i][j] = posX;
+					realShapePosY[i][j] = posY;
+				} else {
+					realShapePosX[i][j] = -1;
+					realShapePosY[i][j] = -1;
+				}
+				posX += BLOCK_WIDTH;
+			}
+			posX = Quadtris.CAMERA_WIDTH / 2 - BLOCK_WIDTH / 2 - BLOCK_WIDTH
+					* (Quadtris.BOARD_WIDTH / 2) + (x * BLOCK_WIDTH);
+			posY += BLOCK_HEIGHT;
+		}
+
 	}
 
-	public void setBoard(int[][] table) {
+	public void setBoardAndTetromino(int[][] table, Shape tetromino) {
 		board = table;
+		this.tetromino = tetromino;
+		shape = tetromino.getShapeArray();
 		genRealPos();
 	}
 
-	public void setRealPosX(int[][] posX) {
-		realPosX = posX;
+	public Shape getTetromino() {
+		return this.tetromino;
 	}
 
-	public void setRealPosY(int[][] posY) {
-		realPosY = posY;
+	public int[][] getRealBoardPosX() {
+		return this.realBoardPosX;
 	}
 
-	public int[][] getBoard() {
-		return this.board;
+	public int[][] getRealBoardPosY() {
+		return this.realBoardPosY;
 	}
 
-	public int[][] getRealPosX() {
-		return this.realPosX;
+	public int[][] getRealShapePosX() {
+		return this.realShapePosX;
 	}
 
-	public int[][] getRealPosY() {
-		return this.realPosY;
-	}
-	public void setTetromino(Shape tetromino){
-		this.tetromino = tetromino;
-	}
-	public Shape getTetromino(){
-		return this.tetromino ;
+	public int[][] getRealShapePosY() {
+		return this.realShapePosY;
 	}
 }
