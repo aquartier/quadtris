@@ -426,22 +426,24 @@ public class SceneManager implements SensorEventListener {
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
-					tetromino = new Shape();
-					while (!placable(tetromino) && !isGameOver()) {
+					Shape newTetro = new Shape();
+					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(tetromino.getDir());
-						tetromino = new Shape();
+						newTetro = new Shape();
 					}
+					tetromino = newTetro;
 				}
-				if (outOfMap(tetromino)) {
+				if (outOfMap(tetromino) && !isGameOver()) {
 					score /= 2;
-					tetromino = new Shape();
-					while (!placable(tetromino) && !isGameOver()) {
+					Shape newTetro = new Shape();
+					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(tetromino.getDir());
-						tetromino = new Shape();
+						newTetro = new Shape();
 					}
+					tetromino = newTetro;
 				}
+				removeFullLine();
 				update();
-				// removeFullLine();
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
@@ -528,17 +530,17 @@ public class SceneManager implements SensorEventListener {
 		return true;
 	}
 
-	synchronized private boolean movable() {
-		Shape nextTetro = new Shape(tetromino);
-		nextTetro.setRPos(nextPoint(nextTetro.getRPos(), nextTetro.getDir()));
-		return placable(nextTetro);
-	}
-
-	synchronized private boolean movable(Shape tetromino, Movement dir) {
-		Shape nextTetro = new Shape(tetromino);
-		nextTetro.setRPos(nextPoint(nextTetro.getRPos(), dir));
-		return placable(nextTetro);
-	}
+	// synchronized private boolean movable() {
+	// Shape nextTetro = new Shape(tetromino);
+	// nextTetro.setRPos(nextPoint(nextTetro.getRPos(), nextTetro.getDir()));
+	// return placable(nextTetro);
+	// }
+	//
+	// synchronized private boolean movable(Shape tetromino, Movement dir) {
+	// Shape nextTetro = new Shape(tetromino);
+	// nextTetro.setRPos(nextPoint(nextTetro.getRPos(), dir));
+	// return placable(nextTetro);
+	// }
 
 	private Point nextPoint(Point curr, Movement direction) {
 		switch (direction) {
@@ -680,8 +682,6 @@ public class SceneManager implements SensorEventListener {
 				return;
 			nextMovement = (tetromino.getRPos().x < controlX()) ? Movement.Right
 					: Movement.Left;
-			// if (movable(tetromino, nextMovement))
-			// moveToNext(tetromino, nextMovement);
 
 		} else {
 
