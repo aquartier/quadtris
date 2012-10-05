@@ -388,23 +388,28 @@ public class SceneManager implements SensorEventListener {
 			public void onTick() {
 				// Your code to execute each interval.
 
-				score++;
-				text.setText("SCORE : " + score);
-				while (!placable(tetromino) && !isGameOver()) {
-					updateGameOverStatus(tetromino.getDir());
-					tetromino = new Shape();
-				}
 				if (isGameOver())
 					return;
+				score++;
+				text.setText("SCORE : " + score);
 				Point oldPos = tetromino.getRPos();
 				moveToNext();
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
+					tetromino = new Shape();
+					while (!placable(tetromino) && !isGameOver()) {
+						updateGameOverStatus(tetromino.getDir());
+						tetromino = new Shape();
+					}
 				}
 				if (outOfMap(tetromino)) {
 					score /= 2;
 					tetromino = new Shape();
+					while (!placable(tetromino) && !isGameOver()) {
+						updateGameOverStatus(tetromino.getDir());
+						tetromino = new Shape();
+					}
 				}
 				update();
 				// removeFullLine();
