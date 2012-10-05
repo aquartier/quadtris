@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
@@ -13,6 +12,8 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
+import org.andengine.input.sensor.acceleration.AccelerationData;
+import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.texture.ITexture;
@@ -30,10 +31,6 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -45,7 +42,7 @@ import com.dekdroid.quadtris.Shape.Tetrominoes;
  * 
  */
 
-public class SceneManager implements SensorEventListener{
+public class SceneManager implements IAccelerationListener{
 
 	private SceneType currentScene;
 	BaseGameActivity activity;
@@ -72,7 +69,6 @@ public class SceneManager implements SensorEventListener{
 	private int score = 0;
 	private int tetrominoArray[][];
 	
-	private SensorManager sensorManager;	 
     private int accellerometerSpeedX;
     private int accellerometerSpeedY;
 
@@ -117,13 +113,12 @@ public class SceneManager implements SensorEventListener{
 
 	// Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
-		sensorManager = (SensorManager) activity.getSystemService(activity.SENSOR_SERVICE);
-		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),sensorManager.SENSOR_DELAY_GAME);
-		engine.registerUpdateHandler(new Timer(0.2f, new Timer.ITimerCallback() {
+		engine.enableAccelerationSensor(activity,this);
+		engine.registerUpdateHandler(new Timer(0.1f, new Timer.ITimerCallback() {
 			public void onTick() {
 				updateTetromino();
 			}
-		}));
+		}));		
 		
 		mFontTexture = new BitmapTextureAtlas(null, 256, 256,
 				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
@@ -577,24 +572,6 @@ public class SceneManager implements SensorEventListener{
 			}
 		}
 	}
-	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
-		synchronized (this) {
-            switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                    accellerometerSpeedX = (int) (event.values[0]*1.5);
-                    accellerometerSpeedY = (int) (event.values[1]*1.5);
-                    break;
-            }
-		}
-	}
 	
 	private void updateTetromino() {
 		// TODO Auto-generated method stub
@@ -609,5 +586,20 @@ public class SceneManager implements SensorEventListener{
 	}
 	private int controlY(){
 		return -accellerometerSpeedX + Quadtris.BOARD_HEIGHT/2;
+	}
+
+	@Override
+	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAccelerationChanged(AccelerationData pAccelerationData) {
+		// TODO Auto-generated method stub
+		if(Math.abs(pAccelerationData.getX()-accellerometerSpeedX) > 1 || Math.abs(1.3*pAccelerationData.getY()-accellerometerSpeedY) > 1.3){
+			accellerometerSpeedX = (int)-pAccelerationData.getX();
+	        accellerometerSpeedY = (int) (1.3*pAccelerationData.getY());		
+		}
 	}
 }
