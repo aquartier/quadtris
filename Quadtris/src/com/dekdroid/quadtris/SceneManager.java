@@ -31,6 +31,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 
 import com.dekdroid.quadtris.Shape.Movement;
+import com.dekdroid.quadtris.Shape.Tetrominoes;
 
 /**
  * 
@@ -80,6 +81,7 @@ public class SceneManager {
 	private SpriteBackground bg2;
 	private SpriteBackground bg3;
 	public int bgNumber = 1;
+	public boolean[] gameOverStatus = new boolean[4];
 
 	public enum SceneType {
 		SPLASH, MAINGAME
@@ -359,6 +361,7 @@ public class SceneManager {
 		resetMap();
 		tetromino = new Shape();
 		update();
+		clearGameOverStatus();
 		// TODO code Control here
 		jeepTimer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
@@ -366,18 +369,19 @@ public class SceneManager {
 
 				score++;
 				text.setText("SCORE : " + score);
-				if (placable(tetromino)) {
+				while (!placable(tetromino) && !isGameOver()) {
+					updateGameOverStatus(tetromino.getDir());
+					tetromino = new Shape();
+				}
+				if (!isGameOver()) {
 					if (movable()) {
 						moveToNext();
 					} else {
 						placeToMap();
 						tetromino = new Shape();
 					}
+					update();
 				}
-				else {
-					tetromino=new Shape();
-				}
-				update();
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
@@ -443,11 +447,6 @@ public class SceneManager {
 	}
 
 	private boolean movable() {
-		// for (int i = 0; i < 4; i++) {
-		// Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
-		// if (map[next.y][next.x] == 1)
-		// return false;
-		// }
 		Shape nextShape = new Shape(tetromino);
 		nextShape.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
 		if (!placable(nextShape))
@@ -498,4 +497,27 @@ public class SceneManager {
 		return true;
 	}
 
+	public boolean isGameOver() {
+		for (int i = 0; i < 4; i++) {
+			if (gameOverStatus[i] == false)
+				return false;
+		}
+		return true;
+	}
+
+	public void updateGameOverStatus(Movement m) {
+		if (m == Movement.Up)
+			gameOverStatus[0] = true;
+		if (m == Movement.Left)
+			gameOverStatus[1] = true;
+		if (m == Movement.Down)
+			gameOverStatus[2] = true;
+		if (m == Movement.Right)
+			gameOverStatus[3] = true;
+	}
+
+	public void clearGameOverStatus() {
+		for (int i = 0; i < 4; i++)
+			gameOverStatus[i] = false;
+	}
 }
