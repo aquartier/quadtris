@@ -33,7 +33,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -60,6 +59,7 @@ public class SceneManager implements SensorEventListener {
 	private int[][] realBoardPosX, realBoardPosY;
 	private int[][] realShapePosX, realShapePosY;
 	private Entity rectangleGroup;
+	private TextureRegion gameOverTexture;
 	private TextureRegion lRotateTexture;
 	private TextureRegion rRotateTexture;
 	private TextureRegion speedTexture;
@@ -89,6 +89,7 @@ public class SceneManager implements SensorEventListener {
 	private SpriteBackground bg1;
 	private SpriteBackground bg2;
 	private SpriteBackground bg3;
+	private Sprite gameOver;
 	public int bgNumber = 1;
 	public boolean[] gameOverStatus = new boolean[4];
 
@@ -136,6 +137,14 @@ public class SceneManager implements SensorEventListener {
 		engine.getTextureManager().loadTexture(this.mFontTexture);
 		activity.getFontManager().loadFont(this.mFont);
 		try {
+			ITexture gameOverTexture = new BitmapTexture(
+					activity.getTextureManager(), new IInputStreamOpener() {
+						@Override
+						public InputStream open() throws IOException {
+							return activity.getAssets()
+									.open("gfx/gameOver.png");
+						}
+					});
 			ITexture backgroundTexture1 = new BitmapTexture(
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
@@ -183,6 +192,7 @@ public class SceneManager implements SensorEventListener {
 			lRotateTexture.load();
 			rRotateTexture.load();
 			speedTexture.load();
+			gameOverTexture.load();
 			backgroundTexture1.load();
 			backgroundTexture2.load();
 			backgroundTexture3.load();
@@ -198,6 +208,8 @@ public class SceneManager implements SensorEventListener {
 					.extractFromTexture(rRotateTexture);
 			this.speedTexture = TextureRegionFactory
 					.extractFromTexture(speedTexture);
+			this.gameOverTexture = TextureRegionFactory
+					.extractFromTexture(gameOverTexture);
 		} catch (IOException e) {
 			Debug.e(e);
 		}
@@ -243,6 +255,22 @@ public class SceneManager implements SensorEventListener {
 				activity.getVertexBufferObjectManager()));
 		bg3 = new SpriteBackground(new Sprite(0, 0, backgroundTexture3,
 				activity.getVertexBufferObjectManager()));
+
+		gameOver = new Sprite(Quadtris.CAMERA_WIDTH / 2
+				- gameOverTexture.getWidth() / 2, Quadtris.CAMERA_HEIGHT / 2
+				- gameOverTexture.getHeight() / 2, gameOverTexture,
+				activity.getVertexBufferObjectManager()) {
+			@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
+					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
+					// TODO rotate left
+					newGame();
+				}
+				return true;
+			}
+
+		};
 
 		Sprite lRotate = new Sprite(20, Quadtris.CAMERA_HEIGHT - 100,
 				lRotateTexture, activity.getVertexBufferObjectManager()) {
@@ -300,6 +328,7 @@ public class SceneManager implements SensorEventListener {
 		mainGameScene.registerTouchArea(lRotate);
 		mainGameScene.registerTouchArea(rRotate);
 		mainGameScene.registerTouchArea(speedUp);
+		mainGameScene.registerTouchArea(gameOver);
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
 		mainGameScene.setBackground(bg1);
 		mainGameScene.attachChild(lRotate);
@@ -435,6 +464,14 @@ public class SceneManager implements SensorEventListener {
 		});
 		engine.registerUpdateHandler(jeepTimer);
 		engine.registerUpdateHandler(bgTimer);
+		engine.registerUpdateHandler(new Timer(1.0f,
+				new Timer.ITimerCallback() {
+					public void onTick() {
+						if (isGameOver() && !gameOver.hasParent()) {
+							mainGameScene.attachChild(gameOver);
+						}
+					}
+				}));
 
 	}
 
@@ -669,5 +706,11 @@ public class SceneManager implements SensorEventListener {
 
 	private int controlY() {
 		return accellerometerSpeedY + Quadtris.BOARD_HEIGHT / 2;
+	}
+
+	private void newGame() {
+		score = 0;
+		clearGameOverStatus();
+		mainGameScene.detachChild(gameOver);
 	}
 }
