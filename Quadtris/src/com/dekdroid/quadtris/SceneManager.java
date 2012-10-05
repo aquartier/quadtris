@@ -388,6 +388,8 @@ public class SceneManager implements SensorEventListener {
 			public void onTick() {
 				// Your code to execute each interval.
 
+
+				Log.d("jeep", "here");
 				if (isGameOver())
 					return;
 				score++;
@@ -397,6 +399,7 @@ public class SceneManager implements SensorEventListener {
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
+					removeFullLine();
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(tetromino.getDir());
@@ -413,7 +416,6 @@ public class SceneManager implements SensorEventListener {
 					}
 					tetromino = newTetro;
 				}
-				removeFullLine();
 				update();
 			}
 		});
@@ -578,7 +580,7 @@ public class SceneManager implements SensorEventListener {
 	}
 
 	public boolean isFullLine(int n) {
-		for (int i = 1; i < n * 2 + 1; i++) {
+		for (int i = 0; i < n * 2 + 1; i++) {
 			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
 					- n] == 0)
 				return false;
@@ -598,7 +600,7 @@ public class SceneManager implements SensorEventListener {
 
 	public void removeFullLine() {
 		int n;
-		for (n = 0; n < Quadtris.BOARD_HEIGHT / 2; n++) {
+		for (n = 1; n < Quadtris.BOARD_HEIGHT / 2; n++) {
 			if (isFullLine(n))
 				break;
 		}
