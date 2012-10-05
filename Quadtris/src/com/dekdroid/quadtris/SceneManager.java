@@ -75,7 +75,7 @@ public class SceneManager implements SensorEventListener {
 	private BitmapTextureAtlas mFontTexture;
 	private Font mFont;
 	private Text text;
-	private int score = 0;
+	private long score = 0;
 	private int tetrominoArray[][];
 
 	private SensorManager sensorManager;
@@ -324,7 +324,7 @@ public class SceneManager implements SensorEventListener {
 			}
 		};
 
-		text = new Text(Quadtris.CAMERA_WIDTH - 200, 40, mFont, "SCORE : "
+		text = new Text(Quadtris.CAMERA_WIDTH - 170, 40, mFont, "SCORE : "
 				+ score, 25, activity.getVertexBufferObjectManager());
 
 		mainGameScene.registerTouchArea(lRotate);
@@ -473,6 +473,7 @@ public class SceneManager implements SensorEventListener {
 		engine.registerUpdateHandler(new Timer(1f, new Timer.ITimerCallback() {
 			@Override
 			public void onTick() {
+				mainGameScene.detachChild(gameOver);
 				if (isGameOver() && !gameOver.hasParent()) {
 					mainGameScene.attachChild(gameOver);
 				}
@@ -517,12 +518,14 @@ public class SceneManager implements SensorEventListener {
 	}
 
 	public void update() {
-		mainGameScene.detachChild(rectangleGroup);
-		boardTable.setBoardAndTetromino(map, tetromino); // Change tetromino you
-															// want and call
-															// update()
-		rectangleGroup = drawBoardTable();
-		mainGameScene.attachChild(rectangleGroup);
+		if(!isGameOver()){
+			mainGameScene.detachChild(rectangleGroup);
+			boardTable.setBoardAndTetromino(map, tetromino); // Change tetromino you
+																// want and call
+																// update()
+			rectangleGroup = drawBoardTable();
+			mainGameScene.attachChild(rectangleGroup);
+		}
 	}
 
 	public void setMap(int[][] map) {
