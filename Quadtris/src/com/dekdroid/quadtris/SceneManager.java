@@ -123,7 +123,7 @@ public class SceneManager implements SensorEventListener {
 		sensorManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				sensorManager.SENSOR_DELAY_GAME);
-		engine.registerUpdateHandler(new Timer(0.1f,
+		engine.registerUpdateHandler(new Timer(0.08f,
 				new Timer.ITimerCallback() {
 					public void onTick() {
 						updateTetromino();
@@ -390,14 +390,13 @@ public class SceneManager implements SensorEventListener {
 				// Your code to execute each interval.
 
 				score++;
-				// text.setText("SCORE : " + score);
+				text.setText("SCORE : " + score);
 				while (!placable(tetromino) && !isGameOver()) {
 					updateGameOverStatus(tetromino.getDir());
 					tetromino = new Shape();
 				}
 				if (isGameOver())
 					return;
-				update();
 				if (placable(tetromino)) {
 					if (movable()) {
 						moveToNext();
@@ -407,6 +406,11 @@ public class SceneManager implements SensorEventListener {
 						update();
 						tetromino = new Shape();
 					}
+				}
+				if (outOfMap(tetromino)) {
+					score /= 2;
+					tetromino = new Shape();
+					update();
 				}
 			}
 		});
@@ -438,6 +442,20 @@ public class SceneManager implements SensorEventListener {
 					map[i][j] = 0;
 			}
 		}
+	}
+
+	public boolean outOfMap(Shape tetromino) {
+		if (tetromino.getRPos().x < 0 && tetromino.getDir() == Movement.Left)
+			return true;
+		if (tetromino.getRPos().y < 0 && tetromino.getDir() == Movement.Up)
+			return true;
+		if (tetromino.getRPos().x > Quadtris.BOARD_WIDTH - 3
+				&& tetromino.getDir() == Movement.Right)
+			return true;
+		if (tetromino.getRPos().y > Quadtris.BOARD_HEIGHT - 3
+				&& tetromino.getDir() == Movement.Down)
+			return true;
+		return false;
 	}
 
 	// Jeep's methods
@@ -592,6 +610,7 @@ public class SceneManager implements SensorEventListener {
 
 			}
 		}
+		clearGameOverStatus();
 	}
 
 	@Override
@@ -606,8 +625,8 @@ public class SceneManager implements SensorEventListener {
 		synchronized (this) {
 			switch (event.sensor.getType()) {
 			case Sensor.TYPE_ACCELEROMETER:
-				accellerometerSpeedX = (int) (event.values[0] *1.5 );
-				accellerometerSpeedY = (int) (event.values[1] *1.5 );
+				accellerometerSpeedX = (int) (event.values[0] * 1.5);
+				accellerometerSpeedY = (int) (event.values[1] * 1.5);
 				break;
 			}
 		}
@@ -615,13 +634,12 @@ public class SceneManager implements SensorEventListener {
 
 	private void updateTetromino() {
 		// TODO Auto-generated method stub
-		if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
-			text.setText("control : " + controlY() + " , " + controlX()
-					+ "\nPos : " + tetromino.getRPos().y + " , "
-					+ tetromino.getRPos().x);
-		}
-		// tetromino.setRPos(new Point(controlX(),controlY())); // <----- For
-		// testing
+		// if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
+		// text.setText("control : " + controlY() + " , " + controlX()
+		// + "\nPos : " + tetromino.getRPos().y + " , "
+		// + tetromino.getRPos().x);
+		//
+		// }
 		if (tetromino.getDir() == Movement.Down
 				|| tetromino.getDir() == Movement.Up) {
 			if (tetromino.getRPos().x == controlX())
@@ -654,14 +672,17 @@ public class SceneManager implements SensorEventListener {
 
 	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void onAccelerationChanged(AccelerationData pAccelerationData) {
 		// TODO Auto-generated method stub
-		if(Math.abs(pAccelerationData.getX()-accellerometerSpeedX) > 1 || Math.abs(1.3*pAccelerationData.getY()-accellerometerSpeedY) > 1.3){
-			accellerometerSpeedX = (int)-pAccelerationData.getX();
-	        accellerometerSpeedY = (int) (1.3*pAccelerationData.getY());		
+		if (Math.abs(pAccelerationData.getX() - accellerometerSpeedX) > 1
+				|| Math.abs(1.5 * pAccelerationData.getY()
+						- accellerometerSpeedY) > 1.3) {
+			accellerometerSpeedX = (int) -pAccelerationData.getX();
+			accellerometerSpeedY = (int) (1.5 * pAccelerationData.getY());
 		}
 	}
+
 }

@@ -27,6 +27,7 @@ public class Shape {
 		// setShape(Tetrominoes.NoShape);
 		setRandomShape();
 	}
+
 	public Shape(Shape tetromino) {
 		coords = new int[4][2];
 		this.setShape(tetromino.getShape());
@@ -37,6 +38,7 @@ public class Shape {
 	private void setDir(Movement dir2) {
 		dir = dir2;
 	}
+
 	public void setShape(Tetrominoes shape) {
 
 		coordsTable = new int[][][] {
@@ -131,6 +133,7 @@ public class Shape {
 		return m;
 	}
 
+
 	public int maxX() {
 		int m = coords[0][0];
 		for (int i = 0; i < 4; i++) {
@@ -169,10 +172,13 @@ public class Shape {
 		}
 	}
 
+
 	public int[][] getShapeArray() {
 		int[][] shapeArray = new int[4][4];
 		for (int i = 0; i < 4; i++) {
-			shapeArray[getY(i) - minY()][getX(i) - minX()] = 1;
+			int y = getY(i) - minY();
+			int x = getX(i) - minX();
+			shapeArray[y][x] = 1;
 		}
 		return shapeArray;
 	}
