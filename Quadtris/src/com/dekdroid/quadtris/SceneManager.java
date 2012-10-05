@@ -606,9 +606,13 @@ public class SceneManager implements SensorEventListener{
 		 if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
 			 text.setText("SPEED : " + accellerometerSpeedX + " , " + accellerometerSpeedY );
 		 }
-		 int x = accellerometerSpeedY + Quadtris.BOARD_HEIGHT/2;
-		 int y = -accellerometerSpeedX + Quadtris.BOARD_WIDTH/2;
-		 tetromino.setRPos(new Point(y,x));
+		 tetromino.setRPos(new Point(controlY(),controlX())); // <----- For testing 
 		 update();
+	}
+	private int controlX(){
+		return accellerometerSpeedY + Quadtris.BOARD_WIDTH/2;
+	}
+	private int controlY(){
+		return -accellerometerSpeedX + Quadtris.BOARD_HEIGHT/2;
 	}
 }
