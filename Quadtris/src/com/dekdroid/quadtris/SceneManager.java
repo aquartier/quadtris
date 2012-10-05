@@ -50,6 +50,8 @@ public class SceneManager implements SensorEventListener {
 	private static final float SCORE_PER_BLOCK = 25;
 	private static final float SCORE_PER_MOVE = 5;
 	private static final float DELAY_DEC_RATE = 0.02f;
+	private static final float SCORE_DEC_RATE = 4;
+	
 	private SceneType currentScene;
 	BaseGameActivity activity;
 	private Engine engine;
@@ -437,7 +439,7 @@ public class SceneManager implements SensorEventListener {
 					tetromino = newTetro;
 				}
 				if (outOfMap(tetromino) && !isGameOver()) {
-					score /= 5;
+					score /= SCORE_DEC_RATE;
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(newTetro.getDir());
