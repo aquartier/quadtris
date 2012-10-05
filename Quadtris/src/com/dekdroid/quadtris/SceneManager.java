@@ -51,7 +51,7 @@ public class SceneManager implements SensorEventListener {
 	private static final float SCORE_PER_MOVE = 5;
 	private static final float DELAY_DEC_RATE = 0.02f;
 	private static final float SCORE_DEC_RATE = 4;
-	
+
 	private SceneType currentScene;
 	BaseGameActivity activity;
 	private Engine engine;
@@ -324,7 +324,7 @@ public class SceneManager implements SensorEventListener {
 			}
 		};
 
-		text = new Text(Quadtris.CAMERA_WIDTH - 150, 40, mFont, "SCORE : "
+		text = new Text(Quadtris.CAMERA_WIDTH - 200, 40, mFont, "SCORE : "
 				+ score, 25, activity.getVertexBufferObjectManager());
 
 		mainGameScene.registerTouchArea(lRotate);
@@ -374,7 +374,10 @@ public class SceneManager implements SensorEventListener {
 							realBoardPosY[i][j], BoardTable.BLOCK_WIDTH - 2,
 							BoardTable.BLOCK_HEIGHT - 2,
 							activity.getVertexBufferObjectManager());
-					myRectangle[i][j].setColor(0, 0, 0);
+					if (i == j && i == Quadtris.BOARD_WIDTH / 2)
+						myRectangle[i][j].setColor(1, 0, 0);
+					else
+						myRectangle[i][j].setColor(0, 0, 0);
 					rectangleGroup.attachChild(myRectangle[i][j]);
 				}
 			}
@@ -718,7 +721,10 @@ public class SceneManager implements SensorEventListener {
 
 	private void newGame() {
 		score = 0;
+		delay = 1.0f;
 		clearGameOverStatus();
+		resetMap();
+		update();
 		mainGameScene.detachChild(gameOver);
 	}
 }
