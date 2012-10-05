@@ -373,14 +373,18 @@ public class SceneManager {
 					updateGameOverStatus(tetromino.getDir());
 					tetromino = new Shape();
 				}
-				if (!isGameOver()) {
+				if (isGameOver())
+					return;
+				update();
+				if (placable(tetromino)) {
 					if (movable()) {
 						moveToNext();
+						update();
 					} else {
 						placeToMap();
+						update();
 						tetromino = new Shape();
 					}
-					update();
 				}
 			}
 		});
@@ -446,12 +450,10 @@ public class SceneManager {
 		return true;
 	}
 
-	private boolean movable() {
-		Shape nextShape = new Shape(tetromino);
-		nextShape.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
-		if (!placable(nextShape))
-			return false;
-		return true;
+	synchronized private boolean movable() {
+		Shape nextTetro = new Shape(tetromino);
+		nextTetro.setRPos(nextPoint(nextTetro.getRPos(), nextTetro.getDir()));
+		return placable(nextTetro);
 	}
 
 	private Point nextPoint(Point curr, Movement direction) {
@@ -468,29 +470,30 @@ public class SceneManager {
 		return null;
 	}
 
-	private void placeToMap() {
+	synchronized private void placeToMap() {
 		tetrominoArray = tetromino.getShapeArray();
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				int y = i + tetromino.getRPos().y;
 				int x = j + tetromino.getRPos().x;
-				if (tetrominoArray[i][j] == 1)
+				if (inTable(new Point(x, y)) && tetrominoArray[i][j] == 1)
 					map[y][x] = 1;
 			}
 		}
 	}
 
-	private void moveToNext() {
+	synchronized private void moveToNext() {
 		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
 	}
 
-	private boolean placable(Shape tetromino) {
-		int[][] tetrominoArray = tetromino.getShapeArray();
+	synchronized private boolean placable(Shape tetro) {
+		int[][] tetroArray = tetro.getShapeArray();
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				int y = i + tetromino.getRPos().y;
-				int x = j + tetromino.getRPos().x;
-				if (tetrominoArray[i][j] == 1 && map[y][x] == 1)
+				int y = i + tetro.getRPos().y;
+				int x = j + tetro.getRPos().x;
+				if (inTable(new Point(x, y)) && tetroArray[i][j] == 1
+						&& map[y][x] == 1)
 					return false;
 			}
 		}

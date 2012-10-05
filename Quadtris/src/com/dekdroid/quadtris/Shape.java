@@ -31,8 +31,12 @@ public class Shape {
 		coords = new int[4][2];
 		this.setShape(tetromino.getShape());
 		this.setRPos(tetromino.getRPos());
+		this.setDir(tetromino.getDir());
 	}
 
+	private void setDir(Movement dir2) {
+		dir = dir2;
+	}
 	public void setShape(Tetrominoes shape) {
 
 		coordsTable = new int[][][] {
