@@ -418,7 +418,6 @@ public class SceneManager implements SensorEventListener {
 				// Your code to execute each interval.
 
 
-				Log.d("jeep", "here");
 				if (isGameOver())
 					return;
 				score++;
