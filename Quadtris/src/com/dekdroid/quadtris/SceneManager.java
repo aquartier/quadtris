@@ -523,4 +523,42 @@ public class SceneManager {
 		for (int i = 0; i < 4; i++)
 			gameOverStatus[i] = false;
 	}
+
+	public boolean isFullLine(int n) {
+		for (int i = 0; i < n * 2 - 1; i++) {
+			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[Quadtris.BOARD_HEIGHT / 2 - n][i + Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[Quadtris.BOARD_HEIGHT / 2 + n][i + Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
+					+ n] == 0)
+				return false;
+		}
+		return true;
+	}
+
+	public void removeFullLine() {
+		int n;
+		for (n = 0; n < Quadtris.BOARD_HEIGHT / 2; n++) {
+			if (isFullLine(n))
+				break;
+		}
+		if (n == Quadtris.BOARD_HEIGHT / 2)
+			return;
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
+				if (i < Quadtris.BOARD_HEIGHT - n
+						&& i >= Quadtris.BOARD_HEIGHT + n)
+					if (j < Quadtris.BOARD_WIDTH - n
+							&& j >= Quadtris.BOARD_WIDTH + n)
+						map[i][j] = 0;
+
+			}
+		}
+	}
 }
