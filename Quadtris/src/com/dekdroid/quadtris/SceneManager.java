@@ -57,7 +57,8 @@ public class SceneManager {
 	private TextureRegion lRotateTexture;
 	private TextureRegion rRotateTexture;
 	private TextureRegion speedTexture;
-	private TextureRegion backgroundTexture1,backgroundTexture2,backgroundTexture3;
+	private TextureRegion backgroundTexture1, backgroundTexture2,
+			backgroundTexture3;
 	private int[][] map;
 	private BitmapTextureAtlas mFontTexture;
 	private Font mFont;
@@ -72,9 +73,9 @@ public class SceneManager {
 
 	private Shape tetromino;
 	private boolean running;
-	
+
 	private float delay = 1.0f; // second
-	private Timer jeepTimer,bgTimer;		// Timer
+	private Timer jeepTimer, bgTimer; // Timer
 	private SpriteBackground bg1;
 	private SpriteBackground bg2;
 	private SpriteBackground bg3;
@@ -116,24 +117,21 @@ public class SceneManager {
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
 						public InputStream open() throws IOException {
-							return activity.getAssets().open(
-									"gfx/bg1.png");
+							return activity.getAssets().open("gfx/bg1.png");
 						}
 					});
 			ITexture backgroundTexture2 = new BitmapTexture(
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
 						public InputStream open() throws IOException {
-							return activity.getAssets().open(
-									"gfx/bg2.png");
+							return activity.getAssets().open("gfx/bg2.png");
 						}
 					});
 			ITexture backgroundTexture3 = new BitmapTexture(
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
 						public InputStream open() throws IOException {
-							return activity.getAssets().open(
-									"gfx/bg3.png");
+							return activity.getAssets().open("gfx/bg3.png");
 						}
 					});
 			ITexture lRotateTexture = new BitmapTexture(
@@ -156,8 +154,7 @@ public class SceneManager {
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
 						public InputStream open() throws IOException {
-							return activity.getAssets().open(
-									"gfx/speed.png");
+							return activity.getAssets().open("gfx/speed.png");
 						}
 					});
 			lRotateTexture.load();
@@ -166,12 +163,18 @@ public class SceneManager {
 			backgroundTexture1.load();
 			backgroundTexture2.load();
 			backgroundTexture3.load();
-			this.backgroundTexture1 = TextureRegionFactory.extractFromTexture(backgroundTexture1);
-			this.backgroundTexture2 = TextureRegionFactory.extractFromTexture(backgroundTexture2);
-			this.backgroundTexture3 = TextureRegionFactory.extractFromTexture(backgroundTexture3);
-			this.lRotateTexture = TextureRegionFactory.extractFromTexture(lRotateTexture);
-			this.rRotateTexture = TextureRegionFactory.extractFromTexture(rRotateTexture);
-			this.speedTexture = TextureRegionFactory.extractFromTexture(speedTexture);
+			this.backgroundTexture1 = TextureRegionFactory
+					.extractFromTexture(backgroundTexture1);
+			this.backgroundTexture2 = TextureRegionFactory
+					.extractFromTexture(backgroundTexture2);
+			this.backgroundTexture3 = TextureRegionFactory
+					.extractFromTexture(backgroundTexture3);
+			this.lRotateTexture = TextureRegionFactory
+					.extractFromTexture(lRotateTexture);
+			this.rRotateTexture = TextureRegionFactory
+					.extractFromTexture(rRotateTexture);
+			this.speedTexture = TextureRegionFactory
+					.extractFromTexture(speedTexture);
 		} catch (IOException e) {
 			Debug.e(e);
 		}
@@ -210,13 +213,16 @@ public class SceneManager {
 
 		rectangleGroup = drawBoardTable();
 		rectangleGroup.setPosition(0, 0);
-		
-		bg1 = new SpriteBackground(new Sprite(0, 0, backgroundTexture1,activity.getVertexBufferObjectManager()));
-		bg2 = new SpriteBackground(new Sprite(0, 0, backgroundTexture2,activity.getVertexBufferObjectManager()));
-		bg3 = new SpriteBackground(new Sprite(0, 0, backgroundTexture3,activity.getVertexBufferObjectManager()));
 
-		Sprite lRotate = new Sprite(20, Quadtris.CAMERA_HEIGHT-100, lRotateTexture,
-				activity.getVertexBufferObjectManager()) {
+		bg1 = new SpriteBackground(new Sprite(0, 0, backgroundTexture1,
+				activity.getVertexBufferObjectManager()));
+		bg2 = new SpriteBackground(new Sprite(0, 0, backgroundTexture2,
+				activity.getVertexBufferObjectManager()));
+		bg3 = new SpriteBackground(new Sprite(0, 0, backgroundTexture3,
+				activity.getVertexBufferObjectManager()));
+
+		Sprite lRotate = new Sprite(20, Quadtris.CAMERA_HEIGHT - 100,
+				lRotateTexture, activity.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
@@ -231,7 +237,8 @@ public class SceneManager {
 				return true;
 			}
 		};
-		Sprite rRotate = new Sprite(Quadtris.CAMERA_WIDTH-100, Quadtris.CAMERA_HEIGHT-100, rRotateTexture,
+		Sprite rRotate = new Sprite(Quadtris.CAMERA_WIDTH - 100,
+				Quadtris.CAMERA_HEIGHT - 100, rRotateTexture,
 				activity.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
@@ -247,16 +254,17 @@ public class SceneManager {
 				return true;
 			}
 		};
-		Sprite speedUp = new Sprite(Quadtris.CAMERA_WIDTH/2 - speedTexture.getWidth()/2, Quadtris.CAMERA_HEIGHT-100, speedTexture,
-				activity.getVertexBufferObjectManager()) {
+		Sprite speedUp = new Sprite(Quadtris.CAMERA_WIDTH / 2
+				- speedTexture.getWidth() / 2, Quadtris.CAMERA_HEIGHT - 100,
+				speedTexture, activity.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
 					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
-				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {					
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					jeepTimer.setInterval(0.1f);
-					
+
 				}
-				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {					
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {
 					jeepTimer.setInterval(delay);
 				}
 				return true;
@@ -355,8 +363,7 @@ public class SceneManager {
 		jeepTimer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
-				
-				resetMap();
+
 				score++;
 				text.setText("SCORE : " + score);
 
@@ -375,16 +382,16 @@ public class SceneManager {
 				 */
 				update();
 			}
-		});		
+		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
 			public void onTick() {
-				if(bgNumber  == 1) {
+				if (bgNumber == 1) {
 					mainGameScene.setBackground(bg1);
 					bgNumber = 2;
-				}else if(bgNumber == 2){
+				} else if (bgNumber == 2) {
 					mainGameScene.setBackground(bg2);
 					bgNumber = 3;
-				}else if(bgNumber == 3){
+				} else if (bgNumber == 3) {
 					mainGameScene.setBackground(bg3);
 					bgNumber = 1;
 				}
@@ -439,11 +446,14 @@ public class SceneManager {
 	}
 
 	private boolean movable() {
-		for (int i = 0; i < 4; i++) {
-			Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
-			if (map[next.y][next.x] == 1)
-				return false;
-		}
+		// for (int i = 0; i < 4; i++) {
+		// Point next = nextPoint(tetromino.getRPos(), tetromino.getDir());
+		// if (map[next.y][next.x] == 1)
+		// return false;
+		// }
+		Shape nextShape = new Shape(tetromino);
+		nextShape.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
+		if(!placable(nextShape))return false;
 		return true;
 	}
 
@@ -462,9 +472,14 @@ public class SceneManager {
 	}
 
 	private void placeToMap() {
+		tetrominoArray = tetromino.getShapeArray();
 		for (int i = 0; i < 4; i++) {
-			map[tetromino.getRPos().y + tetromino.y(i)][tetromino.getRPos().x
-					+ tetromino.x(i)] = 1;
+			for (int j = 0; j < 4; j++) {
+				int y = i + tetromino.getRPos().y;
+				int x = j + tetromino.getRPos().x;
+				if (tetrominoArray[i][j] == 1)
+					map[y][x] = 1;
+			}
 		}
 	}
 
@@ -472,12 +487,15 @@ public class SceneManager {
 		tetromino.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
 	}
 
-	private boolean placable() {
+	private boolean placable(Shape tetromino) {
+		int[][] tetrominoArray = tetromino.getShapeArray();
 		for (int i = 0; i < 4; i++) {
-			int y = tetromino.y(i) + tetromino.getRPos().y;
-			int x = tetromino.x(i) + tetromino.getRPos().x;
-			if (map[y][x] == 1)
-				return false;
+			for (int j = 0; j < 4; j++) {
+				int y = i + tetromino.getRPos().y;
+				int x = j + tetromino.getRPos().x;
+				if (tetrominoArray[i][j] == 1 && map[y][x] == 1)
+					return false;
+			}
 		}
 		return true;
 	}

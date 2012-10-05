@@ -27,6 +27,11 @@ public class Shape {
 		// setShape(Tetrominoes.NoShape);
 		setRandomShape();
 	}
+	public Shape(Shape tetromino) {
+		coords = new int[4][2];
+		this.setShape(tetromino.getShape());
+		this.setRPos(tetromino.getRPos());
+	}
 
 	public void setShape(Tetrominoes shape) {
 
