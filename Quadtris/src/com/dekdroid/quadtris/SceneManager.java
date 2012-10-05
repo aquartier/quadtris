@@ -391,23 +391,23 @@ public class SceneManager implements SensorEventListener{
 
 				score++;
 				//text.setText("SCORE : " + score);
-				while (!placable(tetromino) && !isGameOver()) {
-					updateGameOverStatus(tetromino.getDir());
-					tetromino = new Shape();
-				}
-				if (isGameOver())
-					return;
+//				while (!placable(tetromino) && !isGameOver()) {
+//					updateGameOverStatus(tetromino.getDir());
+//					tetromino = new Shape();
+//				}
+//				if (isGameOver())
+//					return;
 				update();
-				if (placable(tetromino)) {
-					if (movable()) {
-						moveToNext();
-						update();
-					} else {
-						placeToMap();
-						update();
-						tetromino = new Shape();
-					}
-				}
+//				if (placable(tetromino)) {
+//					if (movable()) {
+//						moveToNext();
+//						update();
+//					} else {
+//						placeToMap();
+//						update();
+//						tetromino = new Shape();
+//					}
+//				}
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
@@ -545,7 +545,43 @@ public class SceneManager implements SensorEventListener{
 		for (int i = 0; i < 4; i++)
 			gameOverStatus[i] = false;
 	}
+	public boolean isFullLine(int n) {
+		for (int i = 0; i < n * 2 - 1; i++) {
+			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[Quadtris.BOARD_HEIGHT / 2 - n][i + Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[Quadtris.BOARD_HEIGHT / 2 + n][i + Quadtris.BOARD_WIDTH / 2
+					- n] == 0)
+				return false;
+			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
+					+ n] == 0)
+				return false;
+		}
+		return true;
+	}
 
+	public void removeFullLine() {
+		int n;
+		for (n = 0; n < Quadtris.BOARD_HEIGHT / 2; n++) {
+			if (isFullLine(n))
+				break;
+		}
+		if (n == Quadtris.BOARD_HEIGHT / 2)
+			return;
+		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
+			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
+				if (i < Quadtris.BOARD_HEIGHT - n
+						&& i >= Quadtris.BOARD_HEIGHT + n)
+					if (j < Quadtris.BOARD_WIDTH - n
+							&& j >= Quadtris.BOARD_WIDTH + n)
+						map[i][j] = 0;
+
+			}
+		}
+	}
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub
@@ -558,8 +594,8 @@ public class SceneManager implements SensorEventListener{
 		synchronized (this) {
             switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                    accellerometerSpeedX = (int) event.values[0];
-                    accellerometerSpeedY = (int) event.values[1];
+                    accellerometerSpeedX = (int) (event.values[0]*1.5);
+                    accellerometerSpeedY = (int) (event.values[1]*1.5);
                     break;
             }
 		}
@@ -570,5 +606,9 @@ public class SceneManager implements SensorEventListener{
 		 if ((accellerometerSpeedX != 0) || (accellerometerSpeedY != 0)) {
 			 text.setText("SPEED : " + accellerometerSpeedX + " , " + accellerometerSpeedY );
 		 }
+		 int x = accellerometerSpeedY + Quadtris.BOARD_HEIGHT/2;
+		 int y = -accellerometerSpeedX + Quadtris.BOARD_WIDTH/2;
+		 tetromino.setRPos(new Point(y,x));
+		 update();
 	}
 }
