@@ -430,7 +430,7 @@ public class SceneManager implements SensorEventListener {
 					//removeFullLine();
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
-						updateGameOverStatus(tetromino.getDir());
+						updateGameOverStatus(newTetro.getDir());
 						newTetro = new Shape();
 					}
 					tetromino = newTetro;
@@ -439,7 +439,7 @@ public class SceneManager implements SensorEventListener {
 					score /= 2;
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
-						updateGameOverStatus(tetromino.getDir());
+						updateGameOverStatus(newTetro.getDir());
 						newTetro = new Shape();
 					}
 					tetromino = newTetro;
