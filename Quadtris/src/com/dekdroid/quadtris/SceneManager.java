@@ -229,8 +229,8 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate left
 					tetromino.rotateLeft();
-					// if (!placable())
-					// tetromino.rotateRight();
+					if (!placable(tetromino))
+						tetromino.rotateRight();
 					update();
 
 				}
@@ -246,8 +246,8 @@ public class SceneManager {
 				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 					// TODO rotate right
 					tetromino.rotateRight();
-					// if (!placable())
-					// tetromino.rotateLeft();
+					if (!placable(tetromino))
+						tetromino.rotateLeft();
 					update();
 
 				}
@@ -366,20 +366,17 @@ public class SceneManager {
 
 				score++;
 				text.setText("SCORE : " + score);
-
-				if (movable()) {
-					moveToNext();
-				} else {
-					placeToMap();
-					tetromino = new Shape();
+				if (placable(tetromino)) {
+					if (movable()) {
+						moveToNext();
+					} else {
+						placeToMap();
+						tetromino = new Shape();
+					}
 				}
-				/*
-				 * tetrominoArray = tetromino.getShapeArray(); for (int i = 0; i
-				 * < 4; i++) { for (int j = 0; j < 4; j++) { int y = i +
-				 * tetromino.getRPos().y; int x = j + tetromino.getRPos().x; if
-				 * (inTable(new Point(y, x))) map[y][x] = tetrominoArray[i][j];
-				 * } }
-				 */
+				else {
+					tetromino=new Shape();
+				}
 				update();
 			}
 		});
@@ -453,7 +450,8 @@ public class SceneManager {
 		// }
 		Shape nextShape = new Shape(tetromino);
 		nextShape.setRPos(nextPoint(tetromino.getRPos(), tetromino.getDir()));
-		if(!placable(nextShape))return false;
+		if (!placable(nextShape))
+			return false;
 		return true;
 	}
 
