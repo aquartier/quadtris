@@ -56,7 +56,8 @@ public class SceneManager {
 	private Entity rectangleGroup;
 	private TextureRegion lRotateTexture;
 	private TextureRegion rRotateTexture;
-	private TextureRegion backgroundTexture;
+	private TextureRegion speedTexture;
+	private TextureRegion backgroundTexture1,backgroundTexture2,backgroundTexture3;
 	private int[][] map;
 	private BitmapTextureAtlas mFontTexture;
 	private Font mFont;
@@ -68,10 +69,12 @@ public class SceneManager {
 	private final int DELAY_STEP = 100;
 	private final int DELAY_FINAL = 300;
 	private final int DELAY_DEBUG = 100;
-	private int delay = 1; // second
 
 	private Shape tetromino;
 	private boolean running;
+	
+	private float delay = 1.0f; // second
+	private Timer timer;		// Timer
 
 	public enum SceneType {
 		SPLASH, MAINGAME
@@ -89,7 +92,7 @@ public class SceneManager {
 	public void loadSplashSceneResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 		splashTextureAtlas = new BitmapTextureAtlas(
-				activity.getTextureManager(), 256, 256, TextureOptions.DEFAULT);
+				activity.getTextureManager(), 300, 250, TextureOptions.DEFAULT);
 		splashTextureRegion = BitmapTextureAtlasTextureRegionFactory
 				.createFromAsset(splashTextureAtlas, activity, "splash.png", 0,
 						0);
@@ -105,14 +108,30 @@ public class SceneManager {
 		engine.getTextureManager().loadTexture(this.mFontTexture);
 		activity.getFontManager().loadFont(this.mFont);
 		try {
-			/*
-			 * ITexture backgroundTexture = new
-			 * BitmapTexture(activity.getTextureManager(), new
-			 * IInputStreamOpener() {
-			 * 
-			 * @Override public InputStream open() throws IOException { return
-			 * activity.getAssets().open("gfx/board.gif"); } });
-			 */
+			ITexture backgroundTexture1 = new BitmapTexture(
+					activity.getTextureManager(), new IInputStreamOpener() {
+						@Override
+						public InputStream open() throws IOException {
+							return activity.getAssets().open(
+									"gfx/bg1.png");
+						}
+					});
+			ITexture backgroundTexture2 = new BitmapTexture(
+					activity.getTextureManager(), new IInputStreamOpener() {
+						@Override
+						public InputStream open() throws IOException {
+							return activity.getAssets().open(
+									"gfx/bg2.png");
+						}
+					});
+			ITexture backgroundTexture3 = new BitmapTexture(
+					activity.getTextureManager(), new IInputStreamOpener() {
+						@Override
+						public InputStream open() throws IOException {
+							return activity.getAssets().open(
+									"gfx/bg3.png");
+						}
+					});
 			ITexture lRotateTexture = new BitmapTexture(
 					activity.getTextureManager(), new IInputStreamOpener() {
 						@Override
@@ -129,15 +148,26 @@ public class SceneManager {
 									"gfx/right_rotate.png");
 						}
 					});
+			ITexture speedTexture = new BitmapTexture(
+					activity.getTextureManager(), new IInputStreamOpener() {
+						@Override
+						public InputStream open() throws IOException {
+							return activity.getAssets().open(
+									"gfx/speed.png");
+						}
+					});
 			lRotateTexture.load();
 			rRotateTexture.load();
-			// backgroundTexture.load();
-			// this.backgroundTexture =
-			// TextureRegionFactory.extractFromTexture(backgroundTexture);
-			this.lRotateTexture = TextureRegionFactory
-					.extractFromTexture(lRotateTexture);
-			this.rRotateTexture = TextureRegionFactory
-					.extractFromTexture(rRotateTexture);
+			speedTexture.load();
+			backgroundTexture1.load();
+			backgroundTexture2.load();
+			backgroundTexture3.load();
+			this.backgroundTexture1 = TextureRegionFactory.extractFromTexture(backgroundTexture1);
+			this.backgroundTexture2 = TextureRegionFactory.extractFromTexture(backgroundTexture2);
+			this.backgroundTexture3 = TextureRegionFactory.extractFromTexture(backgroundTexture3);
+			this.lRotateTexture = TextureRegionFactory.extractFromTexture(lRotateTexture);
+			this.rRotateTexture = TextureRegionFactory.extractFromTexture(rRotateTexture);
+			this.speedTexture = TextureRegionFactory.extractFromTexture(speedTexture);
 		} catch (IOException e) {
 			Debug.e(e);
 		}
@@ -179,7 +209,7 @@ public class SceneManager {
 		rectangleGroup = drawBoardTable();
 		rectangleGroup.setPosition(0, 0);
 
-		Sprite lRotate = new Sprite(20, 700, lRotateTexture,
+		Sprite lRotate = new Sprite(20, Quadtris.CAMERA_HEIGHT-100, lRotateTexture,
 				activity.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
@@ -195,7 +225,7 @@ public class SceneManager {
 				return true;
 			}
 		};
-		Sprite rRotate = new Sprite(380, 700, rRotateTexture,
+		Sprite rRotate = new Sprite(Quadtris.CAMERA_WIDTH-100, Quadtris.CAMERA_HEIGHT-100, rRotateTexture,
 				activity.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
@@ -211,15 +241,31 @@ public class SceneManager {
 				return true;
 			}
 		};
+		Sprite speedUp = new Sprite(Quadtris.CAMERA_WIDTH/2 - speedTexture.getWidth()/2, Quadtris.CAMERA_HEIGHT-100, speedTexture,
+				activity.getVertexBufferObjectManager()) {
+			@Override
+			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent,
+					final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {					
+					timer.setInterval(0.1f);
+				}
+				if (pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {					
+					timer.setInterval(delay);
+				}
+				return true;
+			}
+		};
 
 		text = new Text(Quadtris.CAMERA_WIDTH - 150, 40, mFont, "SCORE : "
 				+ score, 25, activity.getVertexBufferObjectManager());
 
 		mainGameScene.registerTouchArea(lRotate);
 		mainGameScene.registerTouchArea(rRotate);
+		mainGameScene.registerTouchArea(speedUp);
 		mainGameScene.setTouchAreaBindingOnActionDownEnabled(true);
 		mainGameScene.attachChild(lRotate);
 		mainGameScene.attachChild(rRotate);
+		mainGameScene.attachChild(speedUp);
 		mainGameScene.attachChild(rectangleGroup); // Add BoardTable to Scene
 		mainGameScene.attachChild(text);
 
@@ -298,9 +344,10 @@ public class SceneManager {
 		tetromino = new Shape();
 		update();
 		// TODO code Control here
-		Timer timer = new Timer(delay, new Timer.ITimerCallback() {
+		timer = new Timer(delay, new Timer.ITimerCallback() {
 			public void onTick() {
 				// Your code to execute each interval.
+				
 				resetMap();
 				score++;
 				text.setText("SCORE : " + score);
