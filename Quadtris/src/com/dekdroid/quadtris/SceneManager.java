@@ -27,6 +27,7 @@ import org.andengine.util.adt.io.in.IInputStreamOpener;
 import org.andengine.util.color.Color;
 import org.andengine.util.debug.Debug;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.hardware.Sensor;
@@ -35,7 +36,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.dekdroid.quadtris.Shape.Movement;
-import com.dekdroid.quadtris.Shape.Tetrominoes;
 
 /**
  * 
@@ -119,12 +119,13 @@ public class SceneManager implements SensorEventListener {
 	// Method loads all of the resources for the game scenes such as sprite
 	public void loadGameSceneResources() {
 		sensorManager = (SensorManager) activity
-				.getSystemService(activity.SENSOR_SERVICE);
+				.getSystemService(Context.SENSOR_SERVICE);
 		sensorManager.registerListener(this,
 				sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-				sensorManager.SENSOR_DELAY_GAME);
+				SensorManager.SENSOR_DELAY_GAME);
 		engine.registerUpdateHandler(new Timer(0.08f,
 				new Timer.ITimerCallback() {
+					@Override
 					public void onTick() {
 						updateTetromino();
 					}
@@ -414,20 +415,20 @@ public class SceneManager implements SensorEventListener {
 		clearGameOverStatus();
 		// TODO code Control here
 		jeepTimer = new Timer(delay, new Timer.ITimerCallback() {
+			@Override
 			public void onTick() {
 				// Your code to execute each interval.
 
-
 				if (isGameOver())
 					return;
-				score++;
+				// score++;
 				text.setText("SCORE : " + score);
 				Point oldPos = tetromino.getRPos();
 				moveToNext();
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
-					//removeFullLine();
+					removeFullLine();
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(newTetro.getDir());
@@ -448,6 +449,7 @@ public class SceneManager implements SensorEventListener {
 			}
 		});
 		bgTimer = new Timer(0.5f, new Timer.ITimerCallback() {
+			@Override
 			public void onTick() {
 				if (bgNumber == 1) {
 					mainGameScene.setBackground(bg1);
@@ -465,6 +467,7 @@ public class SceneManager implements SensorEventListener {
 		engine.registerUpdateHandler(bgTimer);
 		engine.registerUpdateHandler(new Timer(1.0f,
 				new Timer.ITimerCallback() {
+					@Override
 					public void onTick() {
 						if (isGameOver() && !gameOver.hasParent()) {
 							mainGameScene.attachChild(gameOver);
@@ -615,19 +618,18 @@ public class SceneManager implements SensorEventListener {
 			gameOverStatus[i] = false;
 	}
 
+	// TODO CheckLine
 	public boolean isFullLine(int n) {
 		for (int i = 0; i < n * 2 + 1; i++) {
-			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
+			int h = Quadtris.BOARD_HEIGHT;
+			int w = Quadtris.BOARD_WIDTH;
+			if (map[i + h / 2 - n][w / 2 - n] == 0)
 				return false;
-			if (map[Quadtris.BOARD_HEIGHT / 2 - n][i + Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
+			if (map[h / 2 - n][i + w / 2 - n] == 0)
 				return false;
-			if (map[Quadtris.BOARD_HEIGHT / 2 + n][i + Quadtris.BOARD_WIDTH / 2
-					- n] == 0)
+			if (map[i + h / 2 - n][w / 2 + n] == 0)
 				return false;
-			if (map[i + Quadtris.BOARD_HEIGHT / 2 - n][Quadtris.BOARD_WIDTH / 2
-					+ n] == 0)
+			if (map[h / 2 + n][i + w / 2 - n] == 0)
 				return false;
 		}
 
@@ -636,19 +638,24 @@ public class SceneManager implements SensorEventListener {
 
 	public void removeFullLine() {
 		int n;
-		for (n = 1; n < Quadtris.BOARD_HEIGHT / 2; n++) {
-			if (isFullLine(n))
+		boolean chk = false;
+		int h = Quadtris.BOARD_HEIGHT;
+		int w = Quadtris.BOARD_WIDTH;
+		for (n = 1; n < h / 2; n++) {
+			if (isFullLine(n)) {
+				chk = true;
 				break;
+			}
 		}
-		if (n == Quadtris.BOARD_HEIGHT / 2)
+		if (!chk)
 			return;
-		for (int i = 0; i < Quadtris.BOARD_HEIGHT; i++) {
-			for (int j = 0; j < Quadtris.BOARD_WIDTH; j++) {
-				if (i < Quadtris.BOARD_HEIGHT - n
-						&& i >= Quadtris.BOARD_HEIGHT + n)
-					if (j < Quadtris.BOARD_WIDTH - n
-							&& j >= Quadtris.BOARD_WIDTH + n)
-						map[i][j] = 0;
+		score = n;
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				if (i <= h / 2 - n || i >= h / 2 + n)
+					map[i][j] = 0;
+				if (j <= w / 2 - n || j >= w / 2 + n)
+					map[i][j] = 0;
 
 			}
 		}
