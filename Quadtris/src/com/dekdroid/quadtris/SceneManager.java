@@ -47,6 +47,9 @@ import com.dekdroid.quadtris.Shape.Movement;
 
 public class SceneManager implements SensorEventListener {
 
+	private static final float SCORE_PER_BLOCK = 25;
+	private static final float SCORE_PER_MOVE = 5;
+	private static final float DELAY_DEC_RATE = 0.02f;
 	private SceneType currentScene;
 	BaseGameActivity activity;
 	private Engine engine;
@@ -76,11 +79,6 @@ public class SceneManager implements SensorEventListener {
 	private SensorManager sensorManager;
 	private int accellerometerSpeedX;
 	private int accellerometerSpeedY;
-
-	private final int DELAY_START = 1000;
-	private final int DELAY_STEP = 100;
-	private final int DELAY_FINAL = 300;
-	private final int DELAY_DEBUG = 100;
 
 	private Shape tetromino;
 	private boolean running;
@@ -422,14 +420,14 @@ public class SceneManager implements SensorEventListener {
 
 				if (isGameOver())
 					return;
-				score += 20 / delay;
+				score += SCORE_PER_MOVE / delay;
 				text.setText("SCORE : " + score);
 				Point oldPos = tetromino.getRPos();
 				moveToNext();
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
-					delay/=1.1;
+					delay -= DELAY_DEC_RATE;
 					removeFullLine();
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
@@ -439,7 +437,7 @@ public class SceneManager implements SensorEventListener {
 					tetromino = newTetro;
 				}
 				if (outOfMap(tetromino) && !isGameOver()) {
-					score /= 2;
+					score /= 5;
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(newTetro.getDir());
@@ -655,7 +653,7 @@ public class SceneManager implements SensorEventListener {
 				if (i <= h / 2 - n || i >= h / 2 + n || j <= w / 2 - n
 						|| j >= w / 2 + n) {
 					if (map[i][j] == 1)
-						score += 200 / delay;
+						score += SCORE_PER_BLOCK / delay;
 					map[i][j] = 0;
 				}
 
