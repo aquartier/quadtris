@@ -427,7 +427,7 @@ public class SceneManager implements SensorEventListener {
 				if (!placable(tetromino)) {
 					tetromino.setRPos(oldPos);
 					placeToMap();
-					removeFullLine();
+					//removeFullLine();
 					Shape newTetro = new Shape();
 					while (!placable(newTetro) && !isGameOver()) {
 						updateGameOverStatus(tetromino.getDir());
