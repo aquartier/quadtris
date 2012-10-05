@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
@@ -13,6 +12,8 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
+import org.andengine.input.sensor.acceleration.AccelerationData;
+import org.andengine.input.sensor.acceleration.IAccelerationListener;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.texture.ITexture;
@@ -30,10 +31,6 @@ import org.andengine.util.debug.Debug;
 
 import android.graphics.Point;
 import android.graphics.Typeface;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
 import com.dekdroid.quadtris.Shape.Movement;
 import com.dekdroid.quadtris.Shape.Tetrominoes;
@@ -649,5 +646,20 @@ public class SceneManager implements SensorEventListener {
 
 	private int controlY() {
 		return accellerometerSpeedY + Quadtris.BOARD_HEIGHT / 2;
+	}
+
+	@Override
+	public void onAccelerationAccuracyChanged(AccelerationData pAccelerationData) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAccelerationChanged(AccelerationData pAccelerationData) {
+		// TODO Auto-generated method stub
+		if(Math.abs(pAccelerationData.getX()-accellerometerSpeedX) > 1 || Math.abs(1.3*pAccelerationData.getY()-accellerometerSpeedY) > 1.3){
+			accellerometerSpeedX = (int)-pAccelerationData.getX();
+	        accellerometerSpeedY = (int) (1.3*pAccelerationData.getY());		
+		}
 	}
 }
