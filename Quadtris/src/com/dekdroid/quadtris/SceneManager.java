@@ -119,16 +119,11 @@ public class SceneManager implements SensorEventListener{
 	public void loadGameSceneResources() {
 		sensorManager = (SensorManager) activity.getSystemService(activity.SENSOR_SERVICE);
 		sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),sensorManager.SENSOR_DELAY_GAME);
-		engine.registerUpdateHandler(new IUpdateHandler() {
-            public void onUpdate(float pSecondsElapsed) {
-                    // TODO
-            		updateTetromino();
-            }            
-
-			public void reset() {
-                    // TODO Auto-generated method stub
-            }
-		});
+		engine.registerUpdateHandler(new Timer(0.2f, new Timer.ITimerCallback() {
+			public void onTick() {
+				updateTetromino();
+			}
+		}));
 		
 		mFontTexture = new BitmapTextureAtlas(null, 256, 256,
 				TextureOptions.BILINEAR_PREMULTIPLYALPHA);
