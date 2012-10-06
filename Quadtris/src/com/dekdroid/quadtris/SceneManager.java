@@ -726,6 +726,7 @@ public class SceneManager implements SensorEventListener {
 	private void newGame() {
 		score = 0;
 		delay = 1.0f;
+		jeepTimer.setInterval(delay);
 		clearGameOverStatus();
 		resetMap();
 		update();
