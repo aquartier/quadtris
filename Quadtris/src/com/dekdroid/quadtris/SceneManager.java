@@ -417,6 +417,7 @@ public class SceneManager implements SensorEventListener {
 		tetromino = new Shape();
 		update();
 		clearGameOverStatus();
+		delay = 1f;
 		// TODO code Control here
 		jeepTimer = new Timer(delay, new Timer.ITimerCallback() {
 			@Override
